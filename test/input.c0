@@ -1,0 +1,7 @@
+fn foo(i: int, j: int, k: int, l: int) -> int {
+    return (i +- j) * (j + k + l) / l != 123 as double;
+}
+//sss
+fn main() -> void {
+    putint(foo(-123456.123e333));
+}
