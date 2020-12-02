@@ -1,7 +1,15 @@
-fn foo(i: int, j: int, k: int, l: int) -> int {
-    return (i +- j) * (j + k + l) / l != 123 as double;
+const abc:int =1234;
+const ac:int =22;
+fn fib(x: int, y: int) -> int {
+    const abc:int =1234;
+    const abc1:int =1234;
+    const abc2:int =1234;
+    const abc3:int =1234;
+        return abc2-ac;
 }
-//sss
-fn main() -> void {
-    putint(foo(-123456.123e333));
+
+fn main() -> int {
+    putstr(1);
+    fib(abc, 2);
+    return 0;
 }
