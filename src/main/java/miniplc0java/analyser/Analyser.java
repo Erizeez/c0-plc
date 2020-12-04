@@ -164,7 +164,7 @@ public class Analyser {
         isStart = true;
     }
 
-    public String analyseExpr(boolean isOPG) throws CompileError, TokenizeError {
+    public String analyseExpr(boolean isOPG, boolean... isCall) throws CompileError, TokenizeError {
         System.out.println("startExpr");
         Token tempToken;
         String tempExpr = "other";
@@ -387,9 +387,16 @@ public class Analyser {
                         Integer.toString(fn.returnSlots)
                 ));
 
+                int num = 0;
                 if (!check(TokenType.R_PAREN)) {
-                    analyseCallParamList();
+                    num = analyseCallParamList();
                 }
+
+                if(num != function.paramSlots){
+                    throw new AnalyzeError(ErrorCode.ParamsError,
+                            tempToken.getStartPos());
+                }
+
                 expect(TokenType.R_PAREN);
 
                 this.function.body.add(new Instruction(
@@ -397,7 +404,7 @@ public class Analyser {
                         InstructionKind.call,
                         Integer.toString(fn.pos + 1)
                 ));
-                if (fn.returnSlots != 0) {
+                if (fn.returnSlots != 0 && isCall.length != 0 && isCall[0] == true) {
                     this.function.body.add(new Instruction(
                             InstructionType.u32Param,
                             InstructionKind.popn,
@@ -757,14 +764,17 @@ as_expr -> expr 'as' IDENT
         }
     }
 
-    public void analyseCallParamList() throws CompileError, TokenizeError {
+    public int analyseCallParamList() throws CompileError, TokenizeError {
         System.out.println("startCallParamList");
-        analyseExpr(false);
+        int num = 1;
+        analyseExpr(false, true);
         while (check(TokenType.COMMA)) {
             expect(TokenType.COMMA);
-            analyseExpr(false);
+            analyseExpr(false, true);
+            num++;
         }
         System.out.println("endCallParamList");
+        return num;
     }
 
     public void analyseFnParamList() throws CompileError, TokenizeError {
