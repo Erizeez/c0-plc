@@ -27,10 +27,32 @@ public class Program {
         }
     }
 
+    public void write8ByteByCal(int s, PrintStream d) throws IOException {
+        String temp = Integer.toHexString(s);
+
+        for(; temp.length() < 16;){
+            temp = "0" + temp;
+        }System.out.println("-----------" + temp);
+        for(int i = 0; i + 2 <= temp.length(); i+=2){
+            d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
+        }
+    }
+
     public void write4ByteByCal(int s, PrintStream d) throws IOException {
         String temp = Integer.toHexString(s);
 
         for(; temp.length() < 8;){
+            temp = "0" + temp;
+        }System.out.println("-----------" + temp);
+        for(int i = 0; i + 2 <= temp.length(); i+=2){
+            d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
+        }
+    }
+
+    public void write2ByteByCal(int s, PrintStream d) throws IOException {
+        String temp = Integer.toHexString(s);
+
+        for(; temp.length() < 4;){
             temp = "0" + temp;
         }System.out.println("-----------" + temp);
         for(int i = 0; i + 2 <= temp.length(); i+=2){
@@ -65,7 +87,7 @@ public class Program {
             }
             write4ByteByCal(global.count, dos);
             if(global.value.length() == 0){
-                write4ByteByCal(0, dos);
+                write8ByteByCal(0, dos);
             }else{
                 for(int i = 0; i < global.value.length(); i++){
                     writeChar(global.value.charAt(i), dos);
@@ -88,6 +110,9 @@ public class Program {
                     writeBytes(i.exportOpcode(), dos);
                 }else if(i.type == InstructionType.u32Param){
                     writeBytes(i.exportOpcode(), dos);
+                    write4ByteByCal(Integer.parseInt(i.param), dos);
+                }else if(i.type == InstructionType.u64Param){
+                    writeBytes(i.exportOpcode(), dos);
                     for(int j = 0; j < i.param.length(); j++){
                         dos.write(Integer.parseInt(i.param.substring(j, j + 1)));
                     }
@@ -95,18 +120,9 @@ public class Program {
             }
         }
 
-        for(int i = 0; i * 8 < res.length(); i++){
-            byte b = (byte)Integer.parseInt(res.toString().substring(i, i + 8), 16);
-            System.out.println(res.toString().substring(i, i + 8));
-            dos.write(b);
-        }
 
         dos.close();
         //fos.close();
-        InputStream input = new FileInputStream(s);
-        byte[] sss = input.readAllBytes();
-        for(int i = 0; i < sss.length; i++)
-        System.out.println(sss[i]);
 
     }
 
