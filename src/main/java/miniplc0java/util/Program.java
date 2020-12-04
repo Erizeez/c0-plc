@@ -43,7 +43,7 @@ public class Program {
     }
 
     public void exportBinary(String s) throws IOException{
-        FileOutputStream fos = new FileOutputStream(s);
+        //FileOutputStream fos = new FileOutputStream(s);
         //DataOutputStream dos = new DataOutputStream(fos);
 
         PrintStream dos = new PrintStream(new FileOutputStream(s));
@@ -101,7 +101,12 @@ public class Program {
         }
 
         dos.close();
-        fos.close();
+        //fos.close();
+        InputStream input = new FileInputStream(s);
+        byte[] sss = input.readAllBytes();
+        for(int i = 0; i < sss.length; i++)
+        System.out.println(sss[i]);
+
     }
 
     public void export(String s) throws IOException {
