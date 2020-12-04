@@ -142,6 +142,16 @@ public class Analyser {
                 throw new AnalyzeError(ErrorCode.NoReturn,
                         peek().getStartPos());
             }
+        }else{
+            if(function.returnSlots == 0){
+                function.body.add(new Instruction(
+                        InstructionType.NoParam,
+                        InstructionKind.ret
+                ));
+            }else{
+                throw new AnalyzeError(ErrorCode.NoReturn,
+                        peek().getStartPos());
+            }
         }
 
         this.symbolTable.clearNow();
