@@ -93,7 +93,7 @@ public class Analyser {
         this.symbolTable.pushFn(tempToken.getValueString());
         int tempPos = this.symbolTable.symbolStack.size() - 1;
         program.globals.add(new Global(tempToken.getValueString()));
-        this.symbolTable.index.push(this.symbolTable.symbolStack.size() + 1);
+        this.symbolTable.index.push(this.symbolTable.symbolStack.size());
         this.function.name = this.symbolTable.symbolStack.size() - 1;
 
 
