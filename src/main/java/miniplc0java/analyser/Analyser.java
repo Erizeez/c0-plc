@@ -515,7 +515,15 @@ public class Analyser {
         } else if (check(TokenType.STRING_LITERAL)) {
             System.out.println("nowSTRING");
             tempToken = expect(TokenType.STRING_LITERAL);
-            tempExpr = "string";
+            this.symbolTable.pushGlobal("", SymbolKind.CONST,
+                    SymbolType.STRING);
+            this.program.globals.add(new Global(tempToken.getValueString()));
+            function.body.add(new Instruction(
+                    InstructionType.u32Param,
+                    InstructionKind.globa,
+                    Integer.toString(this.program.globals.size() - 1)
+            ));
+            tempExpr = "int";
         } else if (check(TokenType.CHAR_LITERAL)) {
             System.out.println("nowCHAR");
             tempToken = expect(TokenType.CHAR_LITERAL);
