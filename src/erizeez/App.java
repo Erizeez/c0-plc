@@ -10,13 +10,24 @@ import erizeez.tokenizer.Tokenizer;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class App {
-    public static void main(String[] args) throws FileNotFoundException, TokenizeError, CompileError {
-        InputStream input = new FileInputStream("test/input.c0");
+    public static void main(String[] args) throws IOException, TokenizeError, CompileError {
+        InputStream input = null;
+        String outFile;
+        for(int i = 0; i < args.length; i++){
+            if(args[i].equals("-l")){
+                input = new FileInputStream(args[i + 1]);
+            }else if(args[i].equals("-o")){
+                outFile = args[i + 1];
+            }
+        }
+
+        //InputStream input = new FileInputStream("test/input.c0");
 
         Scanner scanner;
         scanner = new Scanner(input);
@@ -43,7 +54,7 @@ public class App {
 //        }
         var analyzer = new Analyser(tokenizer);
         analyzer.analyse();
-
+        analyzer.program.exportBinary(outFile);
     }
 
     private static Tokenizer tokenize(StringIter iter) {

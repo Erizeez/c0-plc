@@ -3,16 +3,14 @@ package erizeez.util;
 import java.util.Stack;
 
 public class SymbolTable {
-    public Stack<Symbol> symbolStack;
-    public Stack<Integer> index;
+    public Stack<Symbol> symbolStack = new Stack();
+    public Stack<Integer> index = new Stack();
+    public int fnNum = 0;
+    public int globalNum = 0;
+    public int num = 0;
 
     public void pushSymbol(String name, SymbolKind kind, SymbolType type){
-        if(symbolStack.peek().kind == SymbolKind.VAR
-                || symbolStack.peek().kind == SymbolKind.CONST){
-            symbolStack.push(new Symbol(name, kind, type, symbolStack.peek().pos + 1));
-        }else{
-            symbolStack.push(new Symbol(name, kind, type, 0));
-        }
+        symbolStack.push(new Symbol(name, kind, type, num++));
     }
 
     public void pushParam(String name, SymbolType type){
@@ -23,8 +21,13 @@ public class SymbolTable {
         }
     }
 
-    public void pushFn(String name, SymbolType type){
-        symbolStack.push(new Symbol(name, SymbolKind.FN, type, 0));
+    public void pushFn(String name){
+        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, fnNum++));
+    }
+
+    public void pushGlobal(String name, SymbolKind kind, SymbolType type){
+        symbolStack.insertElementAt(new Symbol(name, kind, type, globalNum), globalNum);
+        globalNum++;
     }
 
     public boolean isNowExist(String name){
@@ -68,4 +71,16 @@ public class SymbolTable {
         }
         return null;
     }
+
+    public Symbol getFn(String fnName){
+        for(Symbol s : symbolStack){
+            System.out.println(s.name);
+            if(fnName.equals(s.name)
+                    && s.kind == SymbolKind.FN){
+                return s;
+            }
+        }
+        return null;
+    }
+
 }

@@ -1,15 +1,17 @@
-const abc:int =1234;
+const abc:int = (1234 + ---32324*77) + 2323 *323;
 const ac:int =22;
 fn fib(x: int, y: int) -> int {
     const abc:int =1234;
     const abc1:int =1234;
     const abc2:int =1234;
     const abc3:int =1234;
-        return abc2-ac;
+        return x-ac;
 }
 
 fn main() -> int {
-    putstr(1);
-    fib(abc, 2);
+    let a:int=2;
+    while(1>2){
+    a = 3;
+    }
     return 0;
 }
