@@ -67,7 +67,7 @@ name 14 return 0 param 0 loc 0 body 5
 	01 0000000000000002
 	17
 	1a 0
-	48 7
+	48 3
 name 1 return 1 param 0 loc 1 body 14 
 	0a 0
 	01 0000000000000001
@@ -115,11 +115,11 @@ name 7 return 0 param 0 loc 1 body 30
 	1a 0
 	4a 11
 	1a 0
-	48 4
+	48 2
 	1a 0
-	48 4
+	48 2
 	1a 0
-	48 4
+	48 2
 	1a 0
 	1a 1
 	48 1

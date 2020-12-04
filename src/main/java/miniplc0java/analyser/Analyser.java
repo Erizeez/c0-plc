@@ -51,7 +51,8 @@ public class Analyser {
         if (this.symbolTable.isExist("main")) {
             startFn.addInstruction(new Instruction(InstructionType.u32Param,
                     InstructionKind.call,
-                    Integer.toString(symbolTable.getExist("main").pos + 1)));
+                    Integer.toString(symbolTable.getExist("main").pos
+                            + 1)));
         } else {
             throw new AnalyzeError(ErrorCode.NoMainFn, peek().getStartPos());
         }
@@ -92,7 +93,7 @@ public class Analyser {
                     tempToken.getStartPos());
         }
 
-        this.symbolTable.pushFn(tempToken.getValueString());
+        this.symbolTable.pushTrueFn(tempToken.getValueString());
         int tempPos = this.symbolTable.symbolStack.size() - 1;
         program.globals.add(new Global(tempToken.getValueString()));
         this.symbolTable.index.push(this.symbolTable.symbolStack.size());

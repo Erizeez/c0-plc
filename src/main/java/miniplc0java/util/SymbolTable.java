@@ -6,6 +6,7 @@ public class SymbolTable {
     public Stack<Symbol> symbolStack = new Stack();
     public Stack<Integer> index = new Stack();
     public int fnNum = 0;
+    public int trueFnNum = 0;
     public int globalNum = 0;
     public int num = 0;
 
@@ -35,6 +36,11 @@ public class SymbolTable {
                 index.push(temp.pop() + 1);
             }
         }
+    }
+
+    public void pushTrueFn(String name){
+        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, trueFnNum++));
+        fnNum++;
     }
 
     public void pushGlobal(String name, SymbolKind kind, SymbolType type){
