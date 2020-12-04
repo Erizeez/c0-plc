@@ -1,4 +1,4 @@
-package main.java.miniplc0java.tokenizer;
+package miniplc0java.tokenizer;
 
 public class CharCheck {
     private static char[] signChar = {'+', '-', '*', '/', '=', '!', '<', '>',

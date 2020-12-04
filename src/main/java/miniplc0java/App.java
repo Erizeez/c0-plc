@@ -1,18 +1,27 @@
-package main.java.miniplc0java;
+package miniplc0java;
 
-import main.java.miniplc0java.analyser.Analyser;
-import main.java.miniplc0java.error.CompileError;
-import main.java.miniplc0java.error.TokenizeError;
-import main.java.miniplc0java.tokenizer.StringIter;
-import main.java.miniplc0java.tokenizer.Tokenizer;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import miniplc0java.analyser.Analyser;
+import miniplc0java.error.CompileError;
+import miniplc0java.error.TokenizeError;
+import miniplc0java.tokenizer.StringIter;
+import miniplc0java.tokenizer.Token;
+import miniplc0java.tokenizer.TokenType;
+import miniplc0java.tokenizer.Tokenizer;
+
+import net.sourceforge.argparse4j.*;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentAction;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+
 public class App {
-    public static void main(String[] args) throws IOException, TokenizeError, CompileError {
+    public static void main(String[] args) throws CompileError, TokenizeError, IOException {
 //        InputStream input = null;
 //        String outFile = null;
 //        for(int i = 0; i < args.length; i++){
@@ -23,8 +32,10 @@ public class App {
 //            }
 //        }
 
-        InputStream input = new FileInputStream("test/input.c0");
-        String outFile = "test/output.c0";
+        String ssss = System.getProperty("user.dir");
+        System.out.println(System.getProperty("user.dir"));
+        InputStream input = new FileInputStream("files/input.c0");
+        String outFile = "files/output.c0";
 
         Scanner scanner;
         scanner = new Scanner(input);
@@ -53,6 +64,8 @@ public class App {
         analyzer.analyse();
         analyzer.program.exportBinary(outFile);
     }
+
+
 
     private static Tokenizer tokenize(StringIter iter) {
         var tokenizer = new Tokenizer(iter);

@@ -1,11 +1,11 @@
-package main.java.miniplc0java.tokenizer;
+package miniplc0java.tokenizer;
 
-import main.java.miniplc0java.error.ErrorCode;
-import main.java.miniplc0java.error.TokenizeError;
-import main.java.miniplc0java.util.DoubleLiteral;
-import main.java.miniplc0java.util.Pos;
+import miniplc0java.error.ErrorCode;
+import miniplc0java.error.TokenizeError;
+import miniplc0java.util.DoubleLiteral;
+import miniplc0java.util.Pos;
 
-import static main.java.miniplc0java.tokenizer.CharCheck.isEscapeChar;
+import static miniplc0java.tokenizer.CharCheck.isEscapeChar;
 
 public class Tokenizer {
     private StringIter it;

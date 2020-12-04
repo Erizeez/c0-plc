@@ -1,7 +1,8 @@
-package main.java.miniplc0java.tokenizer;
+package miniplc0java.tokenizer;
+
+import miniplc0java.util.Pos;
 
 import java.util.Objects;
-import main.java.miniplc0java.util.Pos;
 
 public class Token {
     private TokenType tokenType;

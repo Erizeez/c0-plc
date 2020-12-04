@@ -1,8 +1,8 @@
-package main.java.miniplc0java.error;
+package miniplc0java.error;
 
-import main.java.miniplc0java.tokenizer.Token;
-import main.java.miniplc0java.tokenizer.TokenType;
-import main.java.miniplc0java.util.Pos;
+import miniplc0java.tokenizer.Token;
+import miniplc0java.tokenizer.TokenType;
+import miniplc0java.util.Pos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class ExpectedTokenError extends CompileError {
 
     @Override
     public ErrorCode getErr() {
-        return ErrorCode.ExpectedToken;
+        return miniplc0java.error.ErrorCode.ExpectedToken;
     }
 
     @Override

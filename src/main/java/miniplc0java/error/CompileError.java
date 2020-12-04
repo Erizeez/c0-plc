@@ -1,6 +1,6 @@
-package main.java.miniplc0java.error;
+package miniplc0java.error;
 
-import main.java.miniplc0java.util.Pos;
+import miniplc0java.util.Pos;
 
 public abstract class CompileError extends Exception {
 

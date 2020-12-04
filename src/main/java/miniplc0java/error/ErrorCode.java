@@ -1,4 +1,4 @@
-package main.java.miniplc0java.error;
+package miniplc0java.error;
 
 public enum ErrorCode {
     NoError, // Should be only used internally.

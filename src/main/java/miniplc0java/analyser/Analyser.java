@@ -1,10 +1,10 @@
-package main.java.miniplc0java.analyser;
+package miniplc0java.analyser;
 
-import main.java.miniplc0java.error.*;
-import main.java.miniplc0java.tokenizer.Token;
-import main.java.miniplc0java.tokenizer.TokenType;
-import main.java.miniplc0java.tokenizer.Tokenizer;
-import main.java.miniplc0java.util.*;
+import miniplc0java.error.*;
+import miniplc0java.tokenizer.Token;
+import miniplc0java.tokenizer.TokenType;
+import miniplc0java.tokenizer.Tokenizer;
+import miniplc0java.util.*;
 
 import java.util.Stack;
 

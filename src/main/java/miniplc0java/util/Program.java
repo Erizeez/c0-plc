@@ -1,4 +1,4 @@
-package main.java.miniplc0java.util;
+package miniplc0java.util;
 
 import java.io.File;
 import java.io.FileWriter;

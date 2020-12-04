@@ -1,4 +1,4 @@
-package main.java.miniplc0java.util;
+package miniplc0java.util;
 
 public enum InstructionKind {
     nop, push, pop, popn, dup, loca,
