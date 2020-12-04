@@ -75,6 +75,7 @@ public class Program {
         //fs.write("Fns\n");
         //Fns
         //fs.write("\n");
+        write4ByteByCal(functions.size(), dos);
         for(Function function : functions){
             write4ByteByCal(function.name, dos);
             write4ByteByCal(function.returnSlots, dos);
