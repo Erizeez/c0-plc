@@ -172,6 +172,7 @@ public class Analyser {
             tempToken = expect(TokenType.IDENT);
             if (check(TokenType.ASSIGN)) {
                 Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
+                tempSymbol.isInit = true;
                 if(tempSymbol.kind != SymbolKind.VAR){
                     throw new AnalyzeError(ErrorCode.InvalidAssign, tempToken.getStartPos());
                 }

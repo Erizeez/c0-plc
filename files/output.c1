@@ -1,28 +1,36 @@
 72 30 3b 3e
 00 00 00 01
-4
+3
 true
 4
 main
 -----------
 true
-120
-=============\n| #  /\\ + \" |\n|  /:\"\"\'\\\\^||\n|/|\\?\"\'/\\  !|\n|\\r \\ #s    |\n|\\a /\\  /\\\\v|\n=============
------------
-true
 6
-putstr
+putint
 -----------
 true
 6
 _start
 -----------
 Fns
-name 3 return 0 param 0 loc 0 body 2 
+name 2 return 0 param 0 loc 0 body 2 
 	1a 0
 	48 1
-name 0 return 0 param 0 loc 0 body 4 
+name 0 return 0 param 0 loc 3 body 16 
+	0a 0
+	01 0000000000000001
+	17
+	0a 1
+	01 0000000000000002
+	17
+	0a 2
+	0a 0
+	13
+	20
+	17
 	1a 0
-	01 1
-	4a 2
+	0a 2
+	13
+	4a 1
 	49

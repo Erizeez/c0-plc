@@ -20,6 +20,7 @@ public class SymbolTable {
         }else{
             symbolStack.push(new Symbol(name, SymbolKind.PARAM, type, 0));
         }
+        num++;
     }
 
     public void pushFn(String name){
