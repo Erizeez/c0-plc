@@ -99,6 +99,7 @@ public class Program {
         }
 
         dos.close();
+        fos.close();
     }
 
     public void export(String s) throws IOException {
