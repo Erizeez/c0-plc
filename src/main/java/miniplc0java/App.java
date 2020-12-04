@@ -33,6 +33,7 @@ public class App {
                 outFile = args[i + 1];
             }
         }
+        System.out.println(infile + "---" + outFile);
 
 //        String ssss = System.getProperty("user.dir");
 //        System.out.println(System.getProperty("user.dir"));
