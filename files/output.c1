@@ -23,6 +23,6 @@ name 3 return 0 param 0 loc 0 body 2
 	48 1
 name 0 return 0 param 0 loc 0 body 4 
 	1a 0
-	0c 1
+	01 1
 	4a 2
 	49

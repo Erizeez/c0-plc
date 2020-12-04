@@ -520,7 +520,7 @@ public class Analyser {
             this.program.globals.add(new Global(tempToken.getValueString()));
             function.body.add(new Instruction(
                     InstructionType.u32Param,
-                    InstructionKind.globa,
+                    InstructionKind.push,
                     Integer.toString(this.program.globals.size() - 1)
             ));
             tempExpr = "int";
