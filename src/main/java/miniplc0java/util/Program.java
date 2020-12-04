@@ -32,7 +32,7 @@ public class Program {
 
         for(; temp.length() < 16;){
             temp = "0" + temp;
-        }System.out.println("-----------" + temp);
+        }
         for(int i = 0; i + 2 <= temp.length(); i+=2){
             d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
         }
@@ -43,7 +43,7 @@ public class Program {
 
         for(; temp.length() < 8;){
             temp = "0" + temp;
-        }System.out.println("-----------" + temp);
+        }
         for(int i = 0; i + 2 <= temp.length(); i+=2){
             d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
         }
@@ -54,7 +54,7 @@ public class Program {
 
         for(; temp.length() < 4;){
             temp = "0" + temp;
-        }System.out.println("-----------" + temp);
+        }
         for(int i = 0; i + 2 <= temp.length(); i+=2){
             d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
         }
@@ -113,8 +113,8 @@ public class Program {
                     write4ByteByCal(Integer.parseInt(i.param), dos);
                 }else if(i.type == InstructionType.u64Param){
                     writeBytes(i.exportOpcode(), dos);
-                    for(int j = 0; j < i.param.length(); j++){
-                        dos.write(Integer.parseInt(i.param.substring(j, j + 1)));
+                    for(int j = 0; j + 2 <= i.param.length(); j+=2){
+                        dos.write(Integer.parseInt(i.param.substring(j, j + 2), 16));
                     }
                 }
             }

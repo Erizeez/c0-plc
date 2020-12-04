@@ -448,9 +448,10 @@ public class Analyser {
             String binaryInt = Integer.toHexString(
                     Integer.parseInt(tempToken.getValueString())
             );
+            System.out.println("ssssss" + binaryInt);
             StringBuilder zero = new StringBuilder();
-            if (binaryInt.length() <= 8) {
-                for (int i = 0; i < 8 - binaryInt.length(); i++) {
+            if (binaryInt.length() <= 16) {
+                for (int i = 0; i < 16 - binaryInt.length(); i++) {
                     zero.append("0");
                 }
                 binaryInt = zero.toString() + binaryInt;
