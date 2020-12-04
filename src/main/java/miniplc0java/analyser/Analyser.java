@@ -142,7 +142,8 @@ public class Analyser {
                 throw new AnalyzeError(ErrorCode.NoReturn,
                         peek().getStartPos());
             }
-        }else{
+        }
+        if(function.body.size() == 0){
             if(function.returnSlots == 0){
                 function.body.add(new Instruction(
                         InstructionType.NoParam,
