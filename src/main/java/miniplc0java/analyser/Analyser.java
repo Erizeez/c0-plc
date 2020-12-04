@@ -433,9 +433,11 @@ public class Analyser {
                 }
                 switch (tempSymbol.type) {
                     case INT:
-                        return "int";
+                        tempExpr = "int";
+                        break;
                     case DOUBLE:
-                        return "double";
+                        tempExpr = "double";
+                        break;
                 }
             } else {
                 throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
