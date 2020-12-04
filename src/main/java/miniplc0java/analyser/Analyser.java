@@ -168,7 +168,26 @@ public class Analyser {
                     throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
                 }
                 expect(TokenType.ASSIGN);
-                analyseExpr(false);
+                String rString = analyseExpr(false);
+
+                switch(tempSymbol.type){
+                    case INT:
+                        if(!rString.equals("int")){
+                            throw new AnalyzeError(ErrorCode.UnmatchType,
+                                    tempToken.getStartPos());
+                        }
+                        break;
+                    case DOUBLE:
+                        if(!rString.equals("double")){
+                            throw new AnalyzeError(ErrorCode.UnmatchType,
+                                    tempToken.getStartPos());
+                        }
+                        break;
+                    default:
+                        throw new AnalyzeError(ErrorCode.UnmatchType,
+                                tempToken.getStartPos());
+                }
+
 
                 function.body.add(new Instruction(
                         InstructionType.NoParam,
@@ -217,6 +236,10 @@ public class Analyser {
 
             Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
             if(tempSymbol != null){
+                if(!tempSymbol.isInit){
+                    throw new AnalyzeError(ErrorCode.NotInitialized,
+                            tempToken.getStartPos());
+                }
                 int tempPos = symbolTable.symbolStack.indexOf(tempSymbol);
                 if(tempPos < symbolTable.globalNum){
                     //  加载全局变量
@@ -250,7 +273,6 @@ public class Analyser {
             }
 
             //not complete
-            tempExpr = "int";
         } else if (check(TokenType.UINT_LITERAL)) {
             System.out.println("nowUINT");
             tempToken = expect(TokenType.UINT_LITERAL);
@@ -682,6 +704,7 @@ as_expr -> expr 'as' IDENT
             }
             if (check(TokenType.ASSIGN)) {
                 expect(TokenType.ASSIGN);
+                this.symbolTable.symbolStack.peek().isInit = true;
                 if(isGlobal){
                     //  全局变量赋值
                     this.startFn.body.add(new Instruction(
@@ -753,6 +776,7 @@ as_expr -> expr 'as' IDENT
                 }
             }
             expect(TokenType.ASSIGN);
+            this.symbolTable.symbolStack.peek().isInit = true;
             if(isGlobal){
                 //  赋值全局常量
                 this.startFn.body.add(new Instruction(
