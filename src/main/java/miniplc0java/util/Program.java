@@ -20,31 +20,33 @@ public class Program {
         return null;
     }
 
-    public void writeBytes(String s, DataOutputStream d) throws IOException {
+    public void writeBytes(String s, PrintStream d) throws IOException {
         String temp = s.replaceAll(" ", "");
         for(int i = 0; i + 2 <= temp.length(); i+=2){
-            d.writeByte(Integer.parseInt(temp.substring(i, i + 2), 16));
+            d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
         }
     }
 
-    public void write4ByteByCal(int s, DataOutputStream d) throws IOException {
+    public void write4ByteByCal(int s, PrintStream d) throws IOException {
         String temp = Integer.toHexString(s);
 
         for(; temp.length() < 8;){
             temp = "0" + temp;
         }System.out.println("-----------" + temp);
         for(int i = 0; i + 2 <= temp.length(); i+=2){
-            d.writeByte(Integer.parseInt(temp.substring(i, i + 2), 16));
+            d.write(Integer.parseInt(temp.substring(i, i + 2), 16));
         }
     }
 
-    public void writeChar(char c, DataOutputStream d) throws IOException {
-        d.writeByte((int) c);
+    public void writeChar(char c, PrintStream d) throws IOException {
+        d.write((int) c);
     }
 
     public void exportBinary(String s) throws IOException{
         FileOutputStream fos = new FileOutputStream(s);
-        DataOutputStream dos = new DataOutputStream(fos);
+        //DataOutputStream dos = new DataOutputStream(fos);
+
+        PrintStream dos = new PrintStream(new FileOutputStream(s));
 
         int[] num;
         StringBuilder res = new StringBuilder();
@@ -57,9 +59,9 @@ public class Program {
         //Globals
         for(Global global : globals){
             if(!global.isConst){
-                dos.writeByte(0);
+                dos.write(0);
             }else{
-                dos.writeByte(1);
+                dos.write(1);
             }
             write4ByteByCal(global.count, dos);
             if(global.value.length() == 0){
@@ -86,7 +88,7 @@ public class Program {
                 }else if(i.type == InstructionType.u32Param){
                     writeBytes(i.exportOpcode(), dos);
                     for(int j = 0; j < i.param.length(); j++){
-                        dos.writeByte(Integer.parseInt(i.param.substring(j, j + 1)));
+                        dos.write(Integer.parseInt(i.param.substring(j, j + 1)));
                     }
                 }
             }
