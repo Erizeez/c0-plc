@@ -22,20 +22,20 @@ import net.sourceforge.argparse4j.inf.Namespace;
 
 public class App {
     public static void main(String[] args) throws CompileError, TokenizeError, IOException {
-//        InputStream input = null;
-//        String outFile = null;
-//        for(int i = 0; i < args.length; i++){
-//            if(args[i].equals("-l")){
-//                input = new FileInputStream(args[i + 1]);
-//            }else if(args[i].equals("-o")){
-//                outFile = args[i + 1];
-//            }
-//        }
+        InputStream input = null;
+        String outFile = null;
+        for(int i = 0; i < args.length; i++){
+            if(args[i].equals("-l")){
+                input = new FileInputStream(args[i + 1]);
+            }else if(args[i].equals("-o")){
+                outFile = args[i + 1];
+            }
+        }
 
-        String ssss = System.getProperty("user.dir");
-        System.out.println(System.getProperty("user.dir"));
-        InputStream input = new FileInputStream("files/input.c0");
-        String outFile = "files/output.c0";
+//        String ssss = System.getProperty("user.dir");
+//        System.out.println(System.getProperty("user.dir"));
+//        InputStream input = new FileInputStream("files/input.c0");
+//        String outFile = "files/output.c0";
 
         Scanner scanner;
         scanner = new Scanner(input);
