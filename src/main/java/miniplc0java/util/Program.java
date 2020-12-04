@@ -1,8 +1,6 @@
 package miniplc0java.util;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,37 +11,6 @@ public class Program {
     public List<Function> functions = new ArrayList();
 
 
-    //  16 -> 2
-    public static String toBinaryString(String s, int t){
-        String temp = s.replaceAll(" ", "");
-        StringBuilder zero = new StringBuilder();
-        temp = Integer.toBinaryString(Integer.parseInt(temp, 16));
-        for(int i = 0; i < 16 * t - temp.length(); i++){
-            zero.append("0");
-        }
-        return zero + temp;
-    }
-
-    // 10 -> 2, (64 bits)
-    public static String toBinaryString64(int s){
-        String temp = Integer.toBinaryString(s);
-        StringBuilder zero = new StringBuilder();
-        for(int i = 0; i < 64 - temp.length(); i++){
-            zero.append("0");
-        }
-        return zero + temp;
-    }
-
-    // 10 -> 2, (64 bits)
-    public static String toBinaryString32(int s){
-        String temp = Integer.toBinaryString(s);
-        StringBuilder zero = new StringBuilder();
-        for(int i = 0; i < 32 - temp.length(); i++){
-            zero.append("0");
-        }
-        return zero + temp;
-    }
-
     public Function getFunction(int pos) {
         for(Function f : functions){
             if(f.name == pos){
@@ -53,28 +20,53 @@ public class Program {
         return null;
     }
 
-    public void exportBinary(String s) throws IOException {
-        File file = new File(s);
-        FileWriter fs = new FileWriter(file);
-        fs.write(toBinaryString(magic, 4));
-        fs.write(toBinaryString(version, 4));
+    public void writeBytes(String s, DataOutputStream d) throws IOException {
+        String temp = s.replaceAll(" ", "");
+        for(int i = 0; i + 2 <= temp.length(); i+=2){
+            d.writeByte(Integer.parseInt(temp.substring(i, i + 2), 16));
+        }
+    }
 
-        fs.write(toBinaryString64(globals.size()));
+    public void write4ByteByCal(int s, DataOutputStream d) throws IOException {
+        String temp = Integer.toHexString(s);
+
+        for(; temp.length() < 8;){
+            temp = "0" + temp;
+        }System.out.println("-----------" + temp);
+        for(int i = 0; i + 2 <= temp.length(); i+=2){
+            d.writeByte(Integer.parseInt(temp.substring(i, i + 2), 16));
+        }
+    }
+
+    public void writeChar(char c, DataOutputStream d) throws IOException {
+        d.writeByte((int) c);
+    }
+
+    public void exportBinary(String s) throws IOException{
+        FileOutputStream fos = new FileOutputStream(s);
+        DataOutputStream dos = new DataOutputStream(fos);
+
+        int[] num;
+        StringBuilder res = new StringBuilder();
+
+        writeBytes(magic, dos);
+        writeBytes(version, dos);
+
+        write4ByteByCal(globals.size(), dos);
 
         //Globals
         for(Global global : globals){
-            if(global.isConst){
-                fs.write(toBinaryString64(1));
+            if(!global.isConst){
+                dos.writeByte(0);
             }else{
-                fs.write(toBinaryString64(0));
+                dos.writeByte(1);
             }
-            fs.write(toBinaryString64(global.count));
+            write4ByteByCal(global.count, dos);
             if(global.value.length() == 0){
-                fs.write(toBinaryString64(0));
+                write4ByteByCal(0, dos);
             }else{
                 for(int i = 0; i < global.value.length(); i++){
-                    fs.write(toBinaryString64(
-                            (int) global.value.charAt(i)));
+                    writeChar(global.value.charAt(i), dos);
                 }
             }
         }
@@ -82,33 +74,40 @@ public class Program {
         //Fns
         //fs.write("\n");
         for(Function function : functions){
-            fs.write(toBinaryString64(function.name));
-            fs.write(toBinaryString64(function.returnSlots));
-            fs.write(toBinaryString64(function.paramSlots));
-            fs.write(toBinaryString64(function.locSlots));
-            fs.write(toBinaryString64(function.body.size()));
+            write4ByteByCal(function.name, dos);
+            write4ByteByCal(function.returnSlots, dos);
+            write4ByteByCal(function.paramSlots, dos);
+            write4ByteByCal(function.locSlots, dos);
+            write4ByteByCal(function.body.size(), dos);
 
             for(Instruction i : function.body){
                 if(i.type == InstructionType.NoParam){
-                    fs.write(toBinaryString(i.exportOpcode(), 1));
+                    writeBytes(i.exportOpcode(), dos);
                 }else if(i.type == InstructionType.u32Param){
-                    fs.write(toBinaryString(i.exportOpcode(), 1)
-                            + toBinaryString(i.param, 2));
-                }else{
-                    fs.write(toBinaryString(i.exportOpcode(), 1)
-                            + i.param);
+                    writeBytes(i.exportOpcode(), dos);
+                    for(int j = 0; j < i.param.length(); j++){
+                        dos.writeByte(Integer.parseInt(i.param.substring(j, j + 1)));
+                    }
                 }
             }
         }
 
-        fs.close();
+        for(int i = 0; i * 8 < res.length(); i++){
+            byte b = (byte)Integer.parseInt(res.toString().substring(i, i + 8), 16);
+            System.out.println(res.toString().substring(i, i + 8));
+            dos.write(b);
+        }
+
+        dos.close();
     }
 
     public void export(String s) throws IOException {
-        File file = new File(s);
+        File file = new File("files/output.c1");
         FileWriter fs = new FileWriter(file);
         fs.write(magic + "\n");
         fs.write(version + "\n");
+
+        fs.write(globals.size() + "\n");
 
         //Globals
         for(Global global : globals){

@@ -442,12 +442,12 @@ public class Analyser {
         } else if (check(TokenType.UINT_LITERAL)) {
             System.out.println("nowUINT");
             tempToken = expect(TokenType.UINT_LITERAL);
-            String binaryInt = Integer.toBinaryString(
+            String binaryInt = Integer.toHexString(
                     Integer.parseInt(tempToken.getValueString())
             );
             StringBuilder zero = new StringBuilder();
-            if (binaryInt.length() <= 64) {
-                for (int i = 0; i < 64 - binaryInt.length(); i++) {
+            if (binaryInt.length() <= 8) {
+                for (int i = 0; i < 8 - binaryInt.length(); i++) {
                     zero.append("0");
                 }
                 binaryInt = zero.toString() + binaryInt;
