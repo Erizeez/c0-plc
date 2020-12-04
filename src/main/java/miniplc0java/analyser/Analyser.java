@@ -84,6 +84,12 @@ public class Analyser {
         expect(TokenType.FN_KW);
 
         Token tempToken = expect(TokenType.IDENT);
+
+        if(this.symbolTable.getFn(tempToken.getValueString()) != null){
+            throw new AnalyzeError(ErrorCode.DuplicateDeclaration,
+                    tempToken.getStartPos());
+        }
+
         this.symbolTable.pushFn(tempToken.getValueString());
         int tempPos = this.symbolTable.symbolStack.size() - 1;
         program.globals.add(new Global(tempToken.getValueString()));

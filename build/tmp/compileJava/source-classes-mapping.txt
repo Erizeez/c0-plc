@@ -14,9 +14,8 @@ miniplc0java/tokenizer/StringIter.java
  miniplc0java.tokenizer.StringIter
 miniplc0java/util/StmtType.java
  miniplc0java.util.StmtType
-miniplc0java/analyser/Analyser.java
- miniplc0java.analyser.Analyser
- miniplc0java.analyser.Analyser$1
+miniplc0java/tokenizer/CharCheck.java
+ miniplc0java.tokenizer.CharCheck
 miniplc0java/util/DoubleLiteral.java
  miniplc0java.util.DoubleLiteral
 miniplc0java/error/CompileError.java
@@ -48,7 +47,10 @@ miniplc0java/tokenizer/Tokenizer.java
  miniplc0java.tokenizer.Tokenizer
 miniplc0java/error/AnalyzeError.java
  miniplc0java.error.AnalyzeError
-miniplc0java/tokenizer/CharCheck.java
- miniplc0java.tokenizer.CharCheck
+miniplc0java/analyser/Analyser.java
+ miniplc0java.analyser.Analyser
+ miniplc0java.analyser.Analyser$1
 miniplc0java/App.java
  miniplc0java.App
+Test.java
+ miniplc0java.Test
