@@ -22,7 +22,19 @@ public class SymbolTable {
     }
 
     public void pushFn(String name){
-        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, fnNum++));
+        if(index.size() == 1){
+            symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, fnNum++));
+        }else{
+            symbolStack.insertElementAt(new Symbol(name, SymbolKind.FN, SymbolType.NONE, fnNum), globalNum + fnNum);
+            fnNum++;
+            Stack<Integer> temp = new Stack();
+            for(;index.size() != 1;){
+                temp.push(index.pop());
+            }
+            for(;temp.size() != 0;){
+                index.push(temp.pop() + 1);
+            }
+        }
     }
 
     public void pushGlobal(String name, SymbolKind kind, SymbolType type){

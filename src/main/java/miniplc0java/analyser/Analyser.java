@@ -48,16 +48,18 @@ public class Analyser {
         startFn.name = symbolTable.symbolStack.size() - 1;
         startFn.addInstruction(new Instruction(InstructionType.u32Param,
                 InstructionKind.stackalloc, "1"));
-        if(this.symbolTable.isExist("main")){
+        if (this.symbolTable.isExist("main")) {
             startFn.addInstruction(new Instruction(InstructionType.u32Param,
                     InstructionKind.call,
                     Integer.toString(symbolTable.getExist("main").pos)));
-        }else{
+        } else {
             throw new AnalyzeError(ErrorCode.NoMainFn, peek().getStartPos());
         }
         startFn.addInstruction(new Instruction(InstructionType.u32Param,
                 InstructionKind.popn, "1"));
+        startFn.name = program.globals.size();
         program.functions.add(0, startFn);
+        program.globals.add(new Global("_start"));
 
         this.symbolTable.index.pop();
         System.out.println("endProgram");
@@ -85,7 +87,7 @@ public class Analyser {
 
         Token tempToken = expect(TokenType.IDENT);
 
-        if(this.symbolTable.getFn(tempToken.getValueString()) != null){
+        if (this.symbolTable.getFn(tempToken.getValueString()) != null) {
             throw new AnalyzeError(ErrorCode.DuplicateDeclaration,
                     tempToken.getStartPos());
         }
@@ -106,22 +108,22 @@ public class Analyser {
         expect(TokenType.R_PAREN);
         expect(TokenType.ARROW);
         Token tempReturn = expect(TokenType.IDENT);
-        if(tempReturn.getValueString().equals("void")){
+        if (tempReturn.getValueString().equals("void")) {
             function.returnSlots = 0;
             this.returnType = 0;
             symbolTable.symbolStack.get(tempPos).returnSlots = 0;
             symbolTable.symbolStack.get(tempPos).returnType = "void";
-        }else if(tempReturn.getValueString().equals("int")){
+        } else if (tempReturn.getValueString().equals("int")) {
             function.returnSlots = 1;
             this.returnType = 1;
             symbolTable.symbolStack.get(tempPos).returnSlots = 1;
             symbolTable.symbolStack.get(tempPos).returnType = "int";
-        }else if(tempReturn.getValueString().equals("double")){
+        } else if (tempReturn.getValueString().equals("double")) {
             function.returnSlots = 1;
             this.returnType = 2;
             symbolTable.symbolStack.get(tempPos).returnSlots = 1;
             symbolTable.symbolStack.get(tempPos).returnType = "double";
-        }else{
+        } else {
             throw new AnalyzeError(ErrorCode.InvalidType,
                     tempReturn.getStartPos());
         }
@@ -143,16 +145,16 @@ public class Analyser {
             tempToken = expect(TokenType.IDENT);
             if (check(TokenType.ASSIGN)) {
                 Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
-                if(tempSymbol != null){
+                if (tempSymbol != null) {
                     int tempPos = symbolTable.symbolStack.indexOf(tempSymbol);
-                    if(tempPos < symbolTable.globalNum){
+                    if (tempPos < symbolTable.globalNum) {
                         //  加载全局变量
                         function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.globa,
                                 Integer.toString(tempPos)
                         ));
-                    }else if(tempPos >= symbolTable.globalNum + symbolTable.fnNum){
+                    } else if (tempPos >= symbolTable.globalNum + symbolTable.fnNum) {
                         //  加载局部变量
                         function.body.add(new Instruction(
                                 InstructionType.u32Param,
@@ -160,25 +162,25 @@ public class Analyser {
                                 Integer.toString(tempPos -
                                         (symbolTable.globalNum + symbolTable.fnNum))
                         ));
-                    }else{
+                    } else {
                         //  非法调用函数
                         throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
                     }
-                }else{
+                } else {
                     throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
                 }
                 expect(TokenType.ASSIGN);
                 String rString = analyseExpr(false);
 
-                switch(tempSymbol.type){
+                switch (tempSymbol.type) {
                     case INT:
-                        if(!rString.equals("int")){
+                        if (!rString.equals("int")) {
                             throw new AnalyzeError(ErrorCode.UnmatchType,
                                     tempToken.getStartPos());
                         }
                         break;
                     case DOUBLE:
-                        if(!rString.equals("double")){
+                        if (!rString.equals("double")) {
                             throw new AnalyzeError(ErrorCode.UnmatchType,
                                     tempToken.getStartPos());
                         }
@@ -199,8 +201,152 @@ public class Analyser {
                 return tempExpr;
             } else if (check(TokenType.L_PAREN)) {
                 expect(TokenType.L_PAREN);
+                String returnType;
+                switch (tempToken.getValueString()) {
+                    case "getint":
+                        this.symbolTable.pushFn("getint");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(1)
+                        ));
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("getint"));
+                        expect(TokenType.R_PAREN);
+                        return "int";
+                    case "getdouble":
+                        this.symbolTable.pushFn("getdouble");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(1)
+                        ));
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("getdouble"));
+                        expect(TokenType.R_PAREN);
+                        return "double";
+                    case "getchar":
+                        this.symbolTable.pushFn("getchar");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(1)
+                        ));
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("getchar"));
+                        expect(TokenType.R_PAREN);
+                        return "int";
+                    case "putint":
+                        this.symbolTable.pushFn("putint");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(0)
+                        ));
+                        returnType = analyseExpr(false);
+                        if(!returnType.equals("int")){
+                            throw new AnalyzeError(ErrorCode.UnmatchType,
+                                    tempToken.getStartPos());
+                        }
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("putint"));
+                        expect(TokenType.R_PAREN);
+                        return "void";
+                    case "putdouble":
+                        this.symbolTable.pushFn("putdouble");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(0)
+                        ));
+                        returnType = analyseExpr(false);
+                        if(!returnType.equals("double")){
+                            throw new AnalyzeError(ErrorCode.UnmatchType,
+                                    tempToken.getStartPos());
+                        }
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("putdouble"));
+                        expect(TokenType.R_PAREN);
+                        return "void";
+                    case "putchar":
+                        this.symbolTable.pushFn("putchar");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(0)
+                        ));
+                        returnType = analyseExpr(false);
+                        if(!returnType.equals("int")){
+                            throw new AnalyzeError(ErrorCode.UnmatchType,
+                                    tempToken.getStartPos());
+                        }
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("putchar"));
+                        expect(TokenType.R_PAREN);
+                        return "void";
+                    case "putstr":
+                        this.symbolTable.pushFn("putstr");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(0)
+                        ));
+                        returnType = analyseExpr(false);
+                        if(!returnType.equals("int")){
+                            throw new AnalyzeError(ErrorCode.UnmatchType,
+                                    tempToken.getStartPos());
+                        }
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("putstr"));
+                        expect(TokenType.R_PAREN);
+                        return "void";
+                    case "putln":
+                        this.symbolTable.pushFn("putln");
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.stackalloc,
+                                Integer.toString(0)
+                        ));
+                        this.function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.callname,
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
+                        ));
+                        program.globals.add(new Global("putln"));
+                        expect(TokenType.R_PAREN);
+                        return "void";
+                    default:
+                }
                 Symbol fn = symbolTable.getFn(tempToken.getValueString());
-                if(fn == null){
+                if (fn == null) {
                     throw new AnalyzeError(ErrorCode.NoFn,
                             tempToken.getStartPos());
                 }
@@ -221,7 +367,7 @@ public class Analyser {
                         InstructionKind.call,
                         Integer.toString(fn.pos + 1)
                 ));
-                if(fn.returnSlots != 0){
+                if (fn.returnSlots != 0) {
                     this.function.body.add(new Instruction(
                             InstructionType.u32Param,
                             InstructionKind.popn,
@@ -235,13 +381,13 @@ public class Analyser {
             }
 
             Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
-            if(tempSymbol != null){
-                if(!tempSymbol.isInit){
+            if (tempSymbol != null) {
+                if (!tempSymbol.isInit) {
                     throw new AnalyzeError(ErrorCode.NotInitialized,
                             tempToken.getStartPos());
                 }
                 int tempPos = symbolTable.symbolStack.indexOf(tempSymbol);
-                if(tempPos < symbolTable.globalNum){
+                if (tempPos < symbolTable.globalNum) {
                     //  加载全局变量
                     function.body.add(new Instruction(
                             InstructionType.u32Param,
@@ -252,7 +398,7 @@ public class Analyser {
                             InstructionType.NoParam,
                             InstructionKind.load64
                     ));
-                }else if(tempPos >= symbolTable.globalNum + symbolTable.fnNum){
+                } else if (tempPos >= symbolTable.globalNum + symbolTable.fnNum) {
                     //  加载局部变量
                     function.body.add(new Instruction(
                             InstructionType.u32Param,
@@ -264,11 +410,17 @@ public class Analyser {
                             InstructionType.NoParam,
                             InstructionKind.load64
                     ));
-                }else{
+                } else {
                     //  非法调用函数
                     throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
                 }
-            }else{
+                switch (tempSymbol.type) {
+                    case INT:
+                        return "int";
+                    case DOUBLE:
+                        return "double";
+                }
+            } else {
                 throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
             }
 
@@ -280,22 +432,22 @@ public class Analyser {
                     Integer.parseInt(tempToken.getValueString())
             );
             StringBuilder zero = new StringBuilder();
-            if(binaryInt.length() <= 64){
-                for(int i = 0; i < 64 - binaryInt.length(); i++){
+            if (binaryInt.length() <= 64) {
+                for (int i = 0; i < 64 - binaryInt.length(); i++) {
                     zero.append("0");
                 }
                 binaryInt = zero.toString() + binaryInt;
-            }else{
+            } else {
                 throw new AnalyzeError(ErrorCode.IntTooLong,
                         tempToken.getStartPos());
             }
-            if(isStart){
+            if (isStart) {
                 startFn.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
                         binaryInt
                 ));
-            }else{
+            } else {
                 function.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
@@ -306,17 +458,17 @@ public class Analyser {
         } else if (check(TokenType.DOUBLE_LITERAL)) {
             System.out.println("nowDOUBLE");
             tempToken = expect(TokenType.DOUBLE_LITERAL);
-            if(isStart){
+            if (isStart) {
                 startFn.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
-                        ((DoubleLiteral)tempToken.getValue()).toString()
+                        ((DoubleLiteral) tempToken.getValue()).toString()
                 ));
-            }else{
+            } else {
                 function.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
-                        ((DoubleLiteral)tempToken.getValue()).toString()
+                        ((DoubleLiteral) tempToken.getValue()).toString()
                 ));
             }
             tempExpr = "double";
@@ -341,9 +493,9 @@ public class Analyser {
             System.out.println("endNegateExpr");
         }
 
-        if(isSign() && !isOPG){
+        if (isSign() && !isOPG) {
             tempExpr = analyseOPG(tempExpr);
-        }else{
+        } else {
         }
         System.out.println("endExpr");
         return tempExpr;
@@ -440,20 +592,20 @@ as_expr -> expr 'as' IDENT
         System.out.println("pushObjIdent");
         while (isExpr()) {
             if (isSign()) {
-                if(signStack.empty()){
+                if (signStack.empty()) {
                     System.out.println("pushSign");
                     signStack.push(next().getTokenType());
                     continue;
                 }
-                if(isSign(signStack.peek())
-                        && peek().getTokenType() == TokenType.MINUS){
+                if (isSign(signStack.peek())
+                        && peek().getTokenType() == TokenType.MINUS) {
                     signStack.push(next().getTokenType());
                     continue;
                 }
                 while (!signStack.empty() &&
                         priorityMatrix
-                        [transferSign(signStack.peek())][transferSign(peek().getTokenType())]
-                        == 1) {
+                                [transferSign(signStack.peek())][transferSign(peek().getTokenType())]
+                                == 1) {
 
                     objectStack.pop();
                     objectStack.pop();
@@ -464,24 +616,24 @@ as_expr -> expr 'as' IDENT
                 }
                 if (!signStack.empty() &&
                         priorityMatrix[transferSign(signStack.peek())][transferSign(peek().getTokenType())] == 0
-                        ) {
-                    if(objectStack.size() == signStack.size() + 1){
+                ) {
+                    if (objectStack.size() == signStack.size() + 1) {
                         System.out.println("pushSign:" + transferSign(signStack.peek()) + "|" + transferSign(peek().getTokenType()));
                         signStack.push(next().getTokenType());
-                    }else{
+                    } else {
 
                         throw new AnalyzeError(ErrorCode.InvalidInput, peek().getStartPos());
                     }
-                } else if(check(TokenType.R_PAREN)){
+                } else if (check(TokenType.R_PAREN)) {
                     break;
-                }else if(signStack.empty()){
+                } else if (signStack.empty()) {
                     System.out.println("pushSign");
                     signStack.push(next().getTokenType());
-                }else{
+                } else {
                     throw new AnalyzeError(ErrorCode.InvalidInput, peek().getStartPos());
                 }
             } else {
-                while(signStack.size() != objectStack.size()){
+                while (signStack.size() != objectStack.size()) {
                     signStack.pop();
                     negateNum++;
                 }
@@ -491,23 +643,23 @@ as_expr -> expr 'as' IDENT
                     System.out.println("pushObjIdent");
                 } else {
                     String tempString = analyseExpr(true);
-                    if(!tempString.equals(t)){
+                    if (!tempString.equals(t)) {
                         throw new AnalyzeError(ErrorCode.UnmatchType,
                                 peek().getStartPos());
                     }
                     objectStack.push("1");
                     System.out.println("pushObjExpr");
                 }
-                if(isStart){
+                if (isStart) {
                     function = startFn;
                 }
-                while(negateNum > 0){
-                    if(t.equals("int")){
+                while (negateNum > 0) {
+                    if (t.equals("int")) {
                         this.function.body.add(new Instruction(
                                 InstructionType.NoParam,
                                 InstructionKind.negi
                         ));
-                    }else if(t.equals("double")){
+                    } else if (t.equals("double")) {
                         this.function.body.add(new Instruction(
                                 InstructionType.NoParam,
                                 InstructionKind.negf
@@ -518,7 +670,7 @@ as_expr -> expr 'as' IDENT
 
             }
         }
-        while(!signStack.isEmpty()){
+        while (!signStack.isEmpty()) {
             objectStack.pop();
             objectStack.pop();
             objectStack.push("1");
@@ -601,11 +753,11 @@ as_expr -> expr 'as' IDENT
         expect(TokenType.COLON);
         Token tempType = expect(TokenType.IDENT);
         SymbolType type;
-        if(tempType.getValueString().equals("int")){
+        if (tempType.getValueString().equals("int")) {
             type = SymbolType.INT;
-        }else if(tempType.getValueString().equals("double")){
+        } else if (tempType.getValueString().equals("double")) {
             type = SymbolType.DOUBLE;
-        }else{
+        } else {
             throw new AnalyzeError(ErrorCode.InvalidType, tempType.getStartPos());
         }
         this.symbolTable.pushParam(tempToken.getValueString(), type);
@@ -635,10 +787,10 @@ as_expr -> expr 'as' IDENT
             analyseReturnStmt();
             type = StmtType.RETURN;
         } else if (check(TokenType.L_BRACE)) {
-            if(this.symbolTable.symbolStack.size() + 1
-                    == this.symbolTable.index.peek()){
+            if (this.symbolTable.symbolStack.size() + 1
+                    == this.symbolTable.index.peek()) {
                 type = analyseBlockStmt();
-            }else{
+            } else {
                 this.symbolTable.index.push(this.symbolTable.symbolStack.size() + 1);
                 type = analyseBlockStmt();
                 this.symbolTable.clearNow();
@@ -671,33 +823,33 @@ as_expr -> expr 'as' IDENT
             Token tempToken = expect(TokenType.IDENT);
             expect(TokenType.COLON);
             Token tempTy = expect(TokenType.IDENT);
-            if (symbolTable.isNowExist(tempToken.getValueString())){
+            if (symbolTable.isNowExist(tempToken.getValueString())) {
                 throw new AnalyzeError(ErrorCode.SymbolDuplicated, tempToken.getStartPos());
-            }else{
-                if(this.symbolTable.index.size() == 1){
+            } else {
+                if (this.symbolTable.index.size() == 1) {
                     //  声明全局变量
                     program.globals.add(symbolTable.globalNum, new Global());
                     isGlobal = true;
-                    if(tempTy.getValueString().equals("int")){
+                    if (tempTy.getValueString().equals("int")) {
                         symbolTable.pushGlobal(tempToken.getValueString(),
                                 SymbolKind.VAR, SymbolType.INT);
-                    }else if(tempTy.getValueString().equals("double")){
+                    } else if (tempTy.getValueString().equals("double")) {
                         symbolTable.pushGlobal(tempToken.getValueString(),
                                 SymbolKind.VAR, SymbolType.DOUBLE);
-                    }else{
+                    } else {
                         throw new AnalyzeError(ErrorCode.InvalidType, tempToken.getStartPos());
                     }
-                }else{
+                } else {
                     //  声明局部变量
                     function.locSlots++;
                     isGlobal = false;
-                    if(tempTy.getValueString().equals("int")){
+                    if (tempTy.getValueString().equals("int")) {
                         symbolTable.pushSymbol(tempToken.getValueString(),
                                 SymbolKind.VAR, SymbolType.INT);
-                    }else if(tempTy.getValueString().equals("double")){
+                    } else if (tempTy.getValueString().equals("double")) {
                         symbolTable.pushSymbol(tempToken.getValueString(),
                                 SymbolKind.VAR, SymbolType.DOUBLE);
-                    }else{
+                    } else {
                         throw new AnalyzeError(ErrorCode.InvalidType, tempToken.getStartPos());
                     }
                 }
@@ -705,12 +857,12 @@ as_expr -> expr 'as' IDENT
             if (check(TokenType.ASSIGN)) {
                 expect(TokenType.ASSIGN);
                 this.symbolTable.symbolStack.peek().isInit = true;
-                if(isGlobal){
+                if (isGlobal) {
                     //  全局变量赋值
                     this.startFn.body.add(new Instruction(
                             InstructionType.u32Param,
                             InstructionKind.globa,
-                            Integer.toString(symbolTable.globalNum)));
+                            Integer.toString(symbolTable.globalNum - 1)));
                     //  指示当前在赋值表达式右部
                     isRExpr = true;
                     tempString = analyseExpr(false);
@@ -718,12 +870,12 @@ as_expr -> expr 'as' IDENT
                     this.startFn.body.add(new Instruction(
                             InstructionType.NoParam,
                             InstructionKind.store64));
-                }else{
+                } else {
                     //  局部变量赋值
                     this.function.body.add(new Instruction(
                             InstructionType.u32Param,
                             InstructionKind.loca,
-                            Integer.toString(symbolTable.num)));
+                            Integer.toString(symbolTable.num - 1)));
                     //  指示当前在赋值表达式右部
                     isRExpr = true;
                     tempString = analyseExpr(false);
@@ -733,7 +885,7 @@ as_expr -> expr 'as' IDENT
                             InstructionKind.store64));
                 }
                 //  防止赋值左右部类型不一致
-                if(!tempString.equals(tempTy.getValueString())){
+                if (!tempString.equals(tempTy.getValueString())) {
                     throw new AnalyzeError(ErrorCode.UnmatchType,
                             peek().getStartPos());
                 }
@@ -744,45 +896,45 @@ as_expr -> expr 'as' IDENT
             expect(TokenType.COLON);
             Token tempTy = expect(TokenType.IDENT);
 
-            if (symbolTable.isNowExist(tempToken.getValueString())){
+            if (symbolTable.isNowExist(tempToken.getValueString())) {
                 throw new AnalyzeError(ErrorCode.SymbolDuplicated, tempToken.getStartPos());
-            }else{
-                if(this.symbolTable.index.size() == 1){
+            } else {
+                if (this.symbolTable.index.size() == 1) {
                     //  声明全局常量
                     program.globals.add(symbolTable.globalNum, new Global());
                     isGlobal = true;
-                    if(tempTy.getValueString().equals("int")){
+                    if (tempTy.getValueString().equals("int")) {
                         symbolTable.pushGlobal(tempToken.getValueString(),
                                 SymbolKind.CONST, SymbolType.INT);
-                    }else if(tempTy.getValueString().equals("double")){
+                    } else if (tempTy.getValueString().equals("double")) {
                         symbolTable.pushGlobal(tempToken.getValueString(),
                                 SymbolKind.CONST, SymbolType.DOUBLE);
-                    }else{
+                    } else {
                         throw new AnalyzeError(ErrorCode.InvalidType, tempToken.getStartPos());
                     }
-                }else{
+                } else {
                     //  声明局部常量
                     function.locSlots++;
                     isGlobal = false;
-                    if(tempTy.getValueString().equals("int")){
+                    if (tempTy.getValueString().equals("int")) {
                         symbolTable.pushSymbol(tempToken.getValueString(),
                                 SymbolKind.CONST, SymbolType.INT);
-                    }else if(tempTy.getValueString().equals("double")){
+                    } else if (tempTy.getValueString().equals("double")) {
                         symbolTable.pushSymbol(tempToken.getValueString(),
                                 SymbolKind.CONST, SymbolType.DOUBLE);
-                    }else{
+                    } else {
                         throw new AnalyzeError(ErrorCode.InvalidType, tempToken.getStartPos());
                     }
                 }
             }
             expect(TokenType.ASSIGN);
             this.symbolTable.symbolStack.peek().isInit = true;
-            if(isGlobal){
+            if (isGlobal) {
                 //  赋值全局常量
                 this.startFn.body.add(new Instruction(
                         InstructionType.u32Param,
                         InstructionKind.globa,
-                        Integer.toString(symbolTable.globalNum)));
+                        Integer.toString(symbolTable.globalNum - 1)));
                 //  指示当前在赋值表达式右部
                 isRExpr = true;
                 tempString = analyseExpr(false);
@@ -790,12 +942,12 @@ as_expr -> expr 'as' IDENT
                 this.startFn.body.add(new Instruction(
                         InstructionType.NoParam,
                         InstructionKind.store64));
-            }else{
+            } else {
                 //  赋值局部常量
                 this.function.body.add(new Instruction(
                         InstructionType.u32Param,
                         InstructionKind.loca,
-                        Integer.toString(symbolTable.num)));
+                        Integer.toString(symbolTable.num - 1)));
                 //  指示当前在赋值表达式右部
                 isRExpr = true;
                 tempString = analyseExpr(false);
@@ -805,7 +957,7 @@ as_expr -> expr 'as' IDENT
                         InstructionKind.store64));
             }
             //  防止赋值左右部类型不一致
-            if(!tempString.equals(tempTy.getValueString())){
+            if (!tempString.equals(tempTy.getValueString())) {
                 throw new AnalyzeError(ErrorCode.UnmatchType,
                         peek().getStartPos());
             }
@@ -934,13 +1086,13 @@ as_expr -> expr 'as' IDENT
     public void analyseReturnStmt() throws CompileError, TokenizeError {
         System.out.println("startReturnStmt");
         expect(TokenType.RETURN_KW);
-        if(returnType != 0){
+        if (returnType != 0) {
             this.function.body.add(new Instruction(
                     InstructionType.u32Param,
                     InstructionKind.arga,
                     "0"
             ));
-        }else{
+        } else {
             this.function.body.add(new Instruction(
                     InstructionType.NoParam,
                     InstructionKind.ret
@@ -948,17 +1100,17 @@ as_expr -> expr 'as' IDENT
         }
         if (!check(TokenType.SEMICOLON)) {
             String tempExpr = analyseExpr(false);
-            if(tempExpr.equals("int")){
-                if(returnType != 1){
+            if (tempExpr.equals("int")) {
+                if (returnType != 1) {
                     throw new AnalyzeError(ErrorCode.UnmatchType,
                             peek().getStartPos());
                 }
-            }else if(tempExpr.equals("double")){
-                if(returnType != 2){
+            } else if (tempExpr.equals("double")) {
+                if (returnType != 2) {
                     throw new AnalyzeError(ErrorCode.UnmatchType,
                             peek().getStartPos());
                 }
-            }else{
+            } else {
                 throw new AnalyzeError(ErrorCode.UnmatchType,
                         peek().getStartPos());
             }
@@ -970,8 +1122,8 @@ as_expr -> expr 'as' IDENT
                     InstructionType.NoParam,
                     InstructionKind.ret
             ));
-        }else{
-            if(returnType != 0){
+        } else {
+            if (returnType != 0) {
                 throw new AnalyzeError(ErrorCode.UnmatchType,
                         peek().getStartPos());
             }
@@ -988,7 +1140,7 @@ as_expr -> expr 'as' IDENT
         StmtType returnType = StmtType.EMPTY;
         while (!check(TokenType.R_BRACE)) {
             type = analyseStmt();
-            if(type == StmtType.RETURN){
+            if (type == StmtType.RETURN) {
                 returnType = type;
             }
         }
@@ -1005,20 +1157,20 @@ as_expr -> expr 'as' IDENT
     }
 
     public void OPGOpcode(String t, TokenType tt) throws TokenizeError, AnalyzeError {
-        if(isRExpr){
-            if(tt == TokenType.PLUS || tt == TokenType.MINUS ||
-                    tt == TokenType.MUL || tt == TokenType.DIV){
+        if (isRExpr) {
+            if (tt == TokenType.PLUS || tt == TokenType.MINUS ||
+                    tt == TokenType.MUL || tt == TokenType.DIV) {
 
-            }else{
+            } else {
                 throw new AnalyzeError(ErrorCode.UnmatchType,
                         peek().getStartPos());
             }
         }
-        if(isStart){
+        if (isStart) {
             function = startFn;
         }
-        if(t.equals("int")){
-            switch(tt){
+        if (t.equals("int")) {
+            switch (tt) {
                 case PLUS:
                     function.body.add(new Instruction(
                             InstructionType.NoParam,
@@ -1090,8 +1242,8 @@ as_expr -> expr 'as' IDENT
                             InstructionType.NoParam,
                             InstructionKind.not));
             }
-        }else if(t.equals("double")){
-            switch(tt){
+        } else if (t.equals("double")) {
+            switch (tt) {
                 case PLUS:
                     function.body.add(new Instruction(
                             InstructionType.NoParam,
@@ -1163,7 +1315,7 @@ as_expr -> expr 'as' IDENT
                             InstructionType.NoParam,
                             InstructionKind.not));
             }
-        }else{
+        } else {
             System.out.println(t);
             throw new AnalyzeError((ErrorCode.InvalidCalculate),
                     peek().getStartPos());

@@ -1,5 +1,18 @@
+let a: double = 0.0;
+let b: int = 1;
+
+
+
 fn main() -> void {
-    let i: int;
-    let j: int;
-    i = 3;
+    a = getdouble();
+    b = getint();
+
+
+    putchar(32);
+    putint(b);
+    putln();
+
+
+    putchar(32);
+    putint(b);
 }

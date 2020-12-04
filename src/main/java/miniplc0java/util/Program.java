@@ -104,8 +104,8 @@ public class Program {
         fs.close();
     }
 
-    public void export() throws IOException {
-        File file = new File("output.c0");
+    public void export(String s) throws IOException {
+        File file = new File(s);
         FileWriter fs = new FileWriter(file);
         fs.write(magic + "\n");
         fs.write(version + "\n");
@@ -115,6 +115,7 @@ public class Program {
             fs.write(global.isConst + "\n");
             fs.write(global.count + "\n");
             fs.write(global.value + "\n");
+            fs.write("-----------\n");
         }
         fs.write("Fns\n");
         //Fns
@@ -138,6 +139,6 @@ public class Program {
     }
 
     public static void main(String[] args) throws IOException {
-        new Program().export();
+        //new Program().export();
     }
 }
