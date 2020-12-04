@@ -130,7 +130,8 @@ public class Analyser {
 
         analyseBlockStmt();
 
-        if(function.body.get(function.body.size() - 1).opcode !=
+        if(function.body.size() != 0 &&
+                function.body.get(function.body.size() - 1).opcode !=
             InstructionKind.ret){
             if(function.returnSlots == 0){
                 function.body.add(new Instruction(
