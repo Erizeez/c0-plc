@@ -28,6 +28,7 @@ public class App {
         for(int i = 0; i < args.length; i++){
             if(args[i].equals("-l")){
                 input = new FileInputStream(args[i + 1]);
+                infile = args[i + 1];
             }else if(args[i].equals("-o")){
                 outFile = args[i + 1];
             }
