@@ -2,8 +2,8 @@ miniplc0java/tokenizer/TokenType.java
  miniplc0java.tokenizer.TokenType
 miniplc0java/util/InstructionKind.java
  miniplc0java.util.InstructionKind
-miniplc0java/error/ErrorCode.java
- miniplc0java.error.ErrorCode
+miniplc0java/util/SymbolTable.java
+ miniplc0java.util.SymbolTable
 miniplc0java/util/SymbolType.java
  miniplc0java.util.SymbolType
 miniplc0java/util/ExprType.java
@@ -18,8 +18,8 @@ miniplc0java/tokenizer/CharCheck.java
  miniplc0java.tokenizer.CharCheck
 miniplc0java/util/DoubleLiteral.java
  miniplc0java.util.DoubleLiteral
-miniplc0java/error/CompileError.java
- miniplc0java.error.CompileError
+miniplc0java/util/Symbol.java
+ miniplc0java.util.Symbol
 miniplc0java/util/SymbolKind.java
  miniplc0java.util.SymbolKind
 miniplc0java/util/Function.java
@@ -27,26 +27,26 @@ miniplc0java/util/Function.java
 miniplc0java/util/Instruction.java
  miniplc0java.util.Instruction
  miniplc0java.util.Instruction$1
-miniplc0java/tokenizer/Tokenizer.java
- miniplc0java.tokenizer.Tokenizer
+miniplc0java/util/Pos.java
+ miniplc0java.util.Pos
 miniplc0java/util/InstructionType.java
  miniplc0java.util.InstructionType
+miniplc0java/tokenizer/Token.java
+ miniplc0java.tokenizer.Token
+miniplc0java/util/Program.java
+ miniplc0java.util.Program
+miniplc0java/tokenizer/Tokenizer.java
+ miniplc0java.tokenizer.Tokenizer
 miniplc0java/error/TokenizeError.java
  miniplc0java.error.TokenizeError
 miniplc0java/error/AnalyzeError.java
  miniplc0java.error.AnalyzeError
 miniplc0java/error/ExpectedTokenError.java
  miniplc0java.error.ExpectedTokenError
-miniplc0java/tokenizer/Token.java
- miniplc0java.tokenizer.Token
-miniplc0java/util/Pos.java
- miniplc0java.util.Pos
-miniplc0java/util/Symbol.java
- miniplc0java.util.Symbol
-miniplc0java/util/SymbolTable.java
- miniplc0java.util.SymbolTable
-miniplc0java/util/Program.java
- miniplc0java.util.Program
+miniplc0java/error/ErrorCode.java
+ miniplc0java.error.ErrorCode
+miniplc0java/error/CompileError.java
+ miniplc0java.error.CompileError
 miniplc0java/analyser/Analyser.java
  miniplc0java.analyser.Analyser
  miniplc0java.analyser.Analyser$1

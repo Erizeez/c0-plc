@@ -47,16 +47,16 @@ public class Analyser {
 
         startFn.name = symbolTable.symbolStack.size() - 1;
         startFn.addInstruction(new Instruction(InstructionType.u32Param,
-                InstructionKind.stackalloc, "1"));
+                InstructionKind.stackalloc, "0"));
         if (this.symbolTable.isExist("main")) {
             startFn.addInstruction(new Instruction(InstructionType.u32Param,
                     InstructionKind.call,
-                    Integer.toString(symbolTable.getExist("main").pos)));
+                    Integer.toString(symbolTable.getExist("main").pos + 1)));
         } else {
             throw new AnalyzeError(ErrorCode.NoMainFn, peek().getStartPos());
         }
-        startFn.addInstruction(new Instruction(InstructionType.u32Param,
-                InstructionKind.popn, "1"));
+//        startFn.addInstruction(new Instruction(InstructionType.u32Param,
+//                InstructionKind.popn, "1"));
         startFn.name = program.globals.size();
         program.functions.add(0, startFn);
         program.globals.add(new Global("_start"));
@@ -129,6 +129,20 @@ public class Analyser {
         }
 
         analyseBlockStmt();
+
+        if(function.body.get(function.body.size() - 1).opcode !=
+            InstructionKind.ret){
+            if(function.returnSlots == 0){
+                function.body.add(new Instruction(
+                        InstructionType.NoParam,
+                        InstructionKind.ret
+                ));
+            }else{
+                throw new AnalyzeError(ErrorCode.NoReturn,
+                        peek().getStartPos());
+            }
+        }
+
         this.symbolTable.clearNow();
         this.symbolTable.index.pop();
 
