@@ -44,7 +44,7 @@ public class SymbolTable {
     }
 
     public void clearNow(){
-        while(symbolStack.size() >= index.peek()){
+        while(symbolStack.size() > index.peek()){
             symbolStack.pop();
         }
     }
