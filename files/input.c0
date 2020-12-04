@@ -1,5 +1,4 @@
 fn main() -> void {
-    let i: int;
-    let j: int;
-    i = 3;
+    const i: int = 1;
+    const i: int = 2;
 }

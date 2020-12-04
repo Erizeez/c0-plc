@@ -33,8 +33,8 @@ miniplc0java/util/InstructionType.java
  miniplc0java.util.InstructionType
 miniplc0java/error/TokenizeError.java
  miniplc0java.error.TokenizeError
-miniplc0java/util/SymbolTable.java
- miniplc0java.util.SymbolTable
+miniplc0java/App.java
+ miniplc0java.App
 miniplc0java/error/ExpectedTokenError.java
  miniplc0java.error.ExpectedTokenError
 miniplc0java/tokenizer/Token.java
@@ -47,10 +47,10 @@ miniplc0java/tokenizer/Tokenizer.java
  miniplc0java.tokenizer.Tokenizer
 miniplc0java/error/AnalyzeError.java
  miniplc0java.error.AnalyzeError
+Test.java
+ miniplc0java.Test
 miniplc0java/analyser/Analyser.java
  miniplc0java.analyser.Analyser
  miniplc0java.analyser.Analyser$1
-miniplc0java/App.java
- miniplc0java.App
-Test.java
- miniplc0java.Test
+miniplc0java/util/SymbolTable.java
+ miniplc0java.util.SymbolTable

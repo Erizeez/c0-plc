@@ -31,7 +31,7 @@ public class SymbolTable {
     }
 
     public boolean isNowExist(String name){
-        for(int i = symbolStack.size() - 1; i >= index.peek(); i--){
+        for(int i = symbolStack.size() - 1; i >= index.peek()- 1; i--){
             if(name.equals(symbolStack.get(i).name)){
                 return true;
             }
