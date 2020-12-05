@@ -190,7 +190,7 @@ public class Analyser {
                 //  Assign
                 Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
                 tempSymbol.isInit = true;
-                if(tempSymbol.kind != SymbolKind.VAR){
+                if(tempSymbol.kind != SymbolKind.VAR && tempSymbol.kind != SymbolKind.PARAM){
                     throw new AnalyzeError(ErrorCode.InvalidAssign, tempToken.getStartPos());
                 }
                 if (tempSymbol != null) {
