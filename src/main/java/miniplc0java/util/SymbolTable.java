@@ -15,7 +15,7 @@ public class SymbolTable {
     }
 
     public void pushParam(String name, SymbolType type){
-        if(symbolStack.peek().kind == SymbolKind.PARAM){
+        if(symbolStack.size() != 0 && symbolStack.peek().kind == SymbolKind.PARAM){
             symbolStack.push(new Symbol(name, SymbolKind.PARAM, type, symbolStack.peek().pos + 1));
         }else{
             symbolStack.push(new Symbol(name, SymbolKind.PARAM, type, 0));
@@ -40,8 +40,9 @@ public class SymbolTable {
     }
 
     public void pushTrueFn(String name){
-        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, trueFnNum++));
+        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, globalNum + fnNum));
         fnNum++;
+        trueFnNum++;
     }
 
     public void pushGlobal(String name, SymbolKind kind, SymbolType type){

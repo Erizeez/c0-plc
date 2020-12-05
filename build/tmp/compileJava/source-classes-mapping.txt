@@ -43,14 +43,14 @@ miniplc0java/error/AnalyzeError.java
  miniplc0java.error.AnalyzeError
 miniplc0java/util/Symbol.java
  miniplc0java.util.Symbol
-miniplc0java/Test.java
- miniplc0java.Test
+miniplc0java/util/SymbolTable.java
+ miniplc0java.util.SymbolTable
 miniplc0java/util/Program.java
  miniplc0java.util.Program
-miniplc0java/App.java
- miniplc0java.App
 miniplc0java/analyser/Analyser.java
  miniplc0java.analyser.Analyser
  miniplc0java.analyser.Analyser$1
-miniplc0java/util/SymbolTable.java
- miniplc0java.util.SymbolTable
+miniplc0java/Test.java
+ miniplc0java.Test
+miniplc0java/App.java
+ miniplc0java.App
