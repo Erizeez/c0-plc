@@ -47,6 +47,13 @@ public class SymbolTable {
     public void pushGlobal(String name, SymbolKind kind, SymbolType type){
         symbolStack.insertElementAt(new Symbol(name, kind, type, globalNum), globalNum);
         globalNum++;
+        Stack<Integer> temp = new Stack();
+        for(;index.size() != 1;){
+            temp.push(index.pop());
+        }
+        for(;temp.size() != 0;){
+            index.push(temp.pop() + 1);
+        }
     }
 
     public boolean isNowExist(String name){
