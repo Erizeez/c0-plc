@@ -186,6 +186,7 @@ public class Analyser {
         if (check(TokenType.IDENT)) {
             tempToken = expect(TokenType.IDENT);
             if (check(TokenType.ASSIGN)) {
+                //  Assign
                 Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
                 tempSymbol.isInit = true;
                 if(tempSymbol.kind != SymbolKind.VAR){
@@ -256,6 +257,7 @@ public class Analyser {
                 System.out.println("nowAssignExpr");
                 tempExpr = "assign";
             } else if (check(TokenType.L_PAREN)) {
+                //  Call
                 expect(TokenType.L_PAREN);
                 String returnType;
                 switch (tempToken.getValueString()) {
@@ -451,7 +453,7 @@ public class Analyser {
                 System.out.println("nowCallExpr");
                 tempExpr = fn.returnType;
             }else {
-
+                //  Indent
                 Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
                 if (tempSymbol != null) {
                     if (!tempSymbol.isInit) {
@@ -472,12 +474,22 @@ public class Analyser {
                         ));
                     } else if (tempPos >= symbolTable.globalNum + symbolTable.fnNum) {
                         //  加载局部变量
-                        function.body.add(new Instruction(
-                                InstructionType.u32Param,
-                                InstructionKind.loca,
-                                Integer.toString(tempPos -
-                                        (symbolTable.globalNum + symbolTable.fnNum))
-                        ));
+                        if(tempSymbol.kind == SymbolKind.PARAM){
+                            function.body.add(new Instruction(
+                                    InstructionType.u32Param,
+                                    InstructionKind.arga,
+                                    Integer.toString(tempPos -
+                                            (symbolTable.globalNum + symbolTable.fnNum))
+                            ));
+                        }else{
+                            function.body.add(new Instruction(
+                                    InstructionType.u32Param,
+                                    InstructionKind.loca,
+                                    Integer.toString(tempPos -
+                                            (symbolTable.globalNum + symbolTable.fnNum
+                                                    + function.paramSlots))
+                            ));
+                        }
                         function.body.add(new Instruction(
                                 InstructionType.NoParam,
                                 InstructionKind.load64
