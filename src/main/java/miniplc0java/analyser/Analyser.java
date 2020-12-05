@@ -722,7 +722,8 @@ as_expr -> expr 'as' IDENT
                     continue;
                 }
                 if (isSign(signStack.peek())
-                        && peek().getTokenType() == TokenType.MINUS) {
+                        && peek().getTokenType() == TokenType.MINUS
+                        && signStack.size() >= objectStack.size()) {
                     signStack.push(next().getTokenType());
                     continue;
                 }
