@@ -555,7 +555,8 @@ public class Analyser {
                     SymbolType.STRING);
             this.program.globals.add(new Global(tempToken.getValueString()
                     .replace("\\n",  (char)10+"")
-                    .replace("\\\\",  "\\")));
+                    .replace("\\\\",  "\\")
+                    .replace("\\\"",  "\"")));
             function.body.add(new Instruction(
                     InstructionType.u64Param,
                     InstructionKind.push,
