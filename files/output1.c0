@@ -2,10 +2,6 @@
 00 00 00 01
 5
 true
-4
-main
------------
-true
 13
 Hello, world!
 -----------
@@ -18,6 +14,10 @@ true
 putln
 -----------
 true
+4
+main
+-----------
+true
 6
 _start
 -----------
@@ -27,8 +27,8 @@ name 4 return 0 param 0 loc 0 body 2
 	48 1
 name 0 return 0 param 0 loc 0 body 6 
 	1a 0
-	01 1
-	4a 2
+	01 0
+	4a 1
 	1a 0
-	4a 3
+	4a 2
 	49
