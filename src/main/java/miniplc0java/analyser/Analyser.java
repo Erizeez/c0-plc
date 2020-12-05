@@ -202,12 +202,23 @@ public class Analyser {
                         ));
                     } else if (tempPos >= symbolTable.globalNum + symbolTable.fnNum) {
                         //  加载局部变量
-                        function.body.add(new Instruction(
-                                InstructionType.u32Param,
-                                InstructionKind.loca,
-                                Integer.toString(tempPos -
-                                        (symbolTable.globalNum + symbolTable.fnNum))
-                        ));
+                        if(tempSymbol.kind == SymbolKind.PARAM){
+                            function.body.add(new Instruction(
+                                    InstructionType.u32Param,
+                                    InstructionKind.arga,
+                                    Integer.toString(tempPos -
+                                            (symbolTable.globalNum + symbolTable.fnNum))
+                            ));
+                        }else{
+                            function.body.add(new Instruction(
+                                    InstructionType.u32Param,
+                                    InstructionKind.loca,
+                                    Integer.toString(tempPos -
+                                            (symbolTable.globalNum + symbolTable.fnNum
+                                                    + function.paramSlots))
+                            ));
+                        }
+
                     } else {
                         //  非法调用函数
                         throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
@@ -542,7 +553,8 @@ public class Analyser {
             tempToken = expect(TokenType.STRING_LITERAL);
             this.symbolTable.pushGlobal("", SymbolKind.CONST,
                     SymbolType.STRING);
-            this.program.globals.add(new Global(tempToken.getValueString()));
+            this.program.globals.add(new Global(tempToken.getValueString()
+                    .replace("\\n",  (char)10+"")));
             function.body.add(new Instruction(
                     InstructionType.u32Param,
                     InstructionKind.push,

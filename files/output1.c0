@@ -1,17 +1,19 @@
 72 30 3b 3e
 00 00 00 01
-5
+4
 true
-13
-Hello, world!
+114
+=============
+| #  /\\ + \" |
+|  /:\"\"\'\\\\^||
+|/|\\?\"\'/\\  !|
+|\\r \\ #s    |
+|\\a /\\  /\\\\v|
+=============
 -----------
 true
 6
 putstr
------------
-true
-5
-putln
 -----------
 true
 4
@@ -22,13 +24,11 @@ true
 _start
 -----------
 Fns
-name 4 return 0 param 0 loc 0 body 2 
+name 3 return 0 param 0 loc 0 body 2 
 	1a 0
 	48 1
-name 3 return 0 param 0 loc 0 body 6 
+name 2 return 0 param 0 loc 0 body 4 
 	1a 0
 	01 0
 	4a 1
-	1a 0
-	4a 2
 	49
