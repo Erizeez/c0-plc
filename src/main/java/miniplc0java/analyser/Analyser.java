@@ -46,27 +46,18 @@ public class Analyser {
         this.symbolTable.pushFn("_start");
 
         startFn.name = symbolTable.symbolStack.size() - 1;
-
+        startFn.addInstruction(new Instruction(InstructionType.u32Param,
+                InstructionKind.stackalloc, "0"));
         if (this.symbolTable.isExist("main")) {
-            Symbol symbolMain = symbolTable.getExist("main");
-            startFn.addInstruction(new Instruction(InstructionType.u32Param,
-                InstructionKind.stackalloc, Integer.toString(symbolMain.returnSlots)));
             startFn.addInstruction(new Instruction(InstructionType.u32Param,
                     InstructionKind.call,
                     Integer.toString(symbolTable.getExist("main").pos
                             + 1)));
-            if(symbolMain.returnSlots != 0){
-                startFn.addInstruction(new Instruction(InstructionType.u32Param,
-                        InstructionKind.popn, Integer.toString(symbolMain.returnSlots)));
-            }
         } else {
             throw new AnalyzeError(ErrorCode.NoMainFn, peek().getStartPos());
         }
-
-
 //        startFn.addInstruction(new Instruction(InstructionType.u32Param,
 //                InstructionKind.popn, "1"));
-
         startFn.name = program.globals.size();
         program.functions.add(0, startFn);
         program.globals.add(new Global("_start"));
@@ -102,14 +93,12 @@ public class Analyser {
                     tempToken.getStartPos());
         }
 
-
-        int tempPos = this.symbolTable.symbolStack.size() - 1;
         this.symbolTable.pushTrueFn(tempToken.getValueString());
+        int tempPos = this.symbolTable.symbolStack.size() - 1;
+        program.globals.add(new Global(tempToken.getValueString()));
         this.symbolTable.index.push(this.symbolTable.symbolStack.size());
         this.function.name = this.symbolTable.symbolStack.size() - 1;
 
-
-        Symbol tempSymbol = this.symbolTable.symbolStack.peek();
 
         expect(TokenType.L_PAREN);
         if (check(TokenType.CONST_KW) ||
@@ -123,23 +112,24 @@ public class Analyser {
         if (tempReturn.getValueString().equals("void")) {
             function.returnSlots = 0;
             this.returnType = 0;
-            tempSymbol.returnSlots = 0;
-            tempSymbol.returnType = "void";
+            symbolTable.symbolStack.get(tempPos).returnSlots = 0;
+            symbolTable.symbolStack.get(tempPos).returnType = "void";
         } else if (tempReturn.getValueString().equals("int")) {
             function.returnSlots = 1;
             this.returnType = 1;
-            tempSymbol.returnSlots = 1;
-            tempSymbol.returnType = "int";
+            symbolTable.symbolStack.get(tempPos).returnSlots = 1;
+            symbolTable.symbolStack.get(tempPos).returnType = "int";
         } else if (tempReturn.getValueString().equals("double")) {
             function.returnSlots = 1;
             this.returnType = 2;
-            tempSymbol.returnSlots = 1;
-            tempSymbol.returnType = "double";
+            symbolTable.symbolStack.get(tempPos).returnSlots = 1;
+            symbolTable.symbolStack.get(tempPos).returnType = "double";
         } else {
             throw new AnalyzeError(ErrorCode.InvalidType,
                     tempReturn.getStartPos());
         }
 
+        this.program.functions.add(this.function);
 
         analyseBlockStmt();
 
@@ -152,8 +142,8 @@ public class Analyser {
                         InstructionKind.ret
                 ));
             }else{
-//                throw new AnalyzeError(ErrorCode.NoReturn,
-//                        peek().getStartPos());
+                throw new AnalyzeError(ErrorCode.NoReturn,
+                        peek().getStartPos());
             }
         }
         if(function.body.size() == 0){
@@ -171,8 +161,6 @@ public class Analyser {
         this.symbolTable.clearNow();
         this.symbolTable.index.pop();
 
-        this.program.functions.add(this.function);
-        program.globals.add(new Global(tempToken.getValueString()));
 
         System.out.println("endFunction");
         isStart = true;
@@ -257,7 +245,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("getint"));
                         expect(TokenType.R_PAREN);
@@ -272,7 +260,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("getdouble"));
                         expect(TokenType.R_PAREN);
@@ -287,7 +275,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("getchar"));
                         expect(TokenType.R_PAREN);
@@ -307,7 +295,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("putint"));
                         expect(TokenType.R_PAREN);
@@ -327,7 +315,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("putdouble"));
                         expect(TokenType.R_PAREN);
@@ -347,7 +335,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("putchar"));
                         expect(TokenType.R_PAREN);
@@ -367,7 +355,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("putstr"));
                         expect(TokenType.R_PAREN);
@@ -382,7 +370,7 @@ public class Analyser {
                         this.function.body.add(new Instruction(
                                 InstructionType.u32Param,
                                 InstructionKind.callname,
-                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 2)
+                                Integer.toString(symbolTable.fnNum + symbolTable.globalNum - 1)
                         ));
                         program.globals.add(new Global("putln"));
                         expect(TokenType.R_PAREN);
@@ -391,7 +379,6 @@ public class Analyser {
                 }
                 Symbol fn = symbolTable.getFn(tempToken.getValueString());
                 if (fn == null) {
-
                     throw new AnalyzeError(ErrorCode.NoFn,
                             tempToken.getStartPos());
                 }
@@ -407,19 +394,10 @@ public class Analyser {
                     num = analyseCallParamList();
                 }
 
-                if(fn.pos + 1 == symbolTable.fnNum){
-                    if(num != function.paramSlots){
-                        throw new AnalyzeError(ErrorCode.ParamsError,
-                                tempToken.getStartPos());
-                    }
-                }else{
-                    if(num != program.functions.get(fn.pos).paramSlots){
-                        throw new AnalyzeError(ErrorCode.ParamsError,
-                                tempToken.getStartPos());
-                    }
+                if(num != program.functions.get(fn.pos).paramSlots){
+                    throw new AnalyzeError(ErrorCode.ParamsError,
+                            tempToken.getStartPos());
                 }
-
-
 
                 expect(TokenType.R_PAREN);
 
