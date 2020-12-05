@@ -208,7 +208,7 @@ public class Analyser {
                                     InstructionType.u32Param,
                                     InstructionKind.arga,
                                     Integer.toString(tempPos -
-                                            (symbolTable.globalNum + symbolTable.fnNum))
+                                            (symbolTable.globalNum + symbolTable.fnNum) + 1)
                             ));
                         }else{
                             function.body.add(new Instruction(
@@ -479,7 +479,7 @@ public class Analyser {
                                     InstructionType.u32Param,
                                     InstructionKind.arga,
                                     Integer.toString(tempPos -
-                                            (symbolTable.globalNum + symbolTable.fnNum))
+                                            (symbolTable.globalNum + symbolTable.fnNum) + 1)
                             ));
                         }else{
                             function.body.add(new Instruction(
