@@ -209,7 +209,8 @@ public class Analyser {
                                     InstructionType.u32Param,
                                     InstructionKind.arga,
                                     Integer.toString(tempPos -
-                                            (symbolTable.globalNum + symbolTable.fnNum) + 1)
+                                            (symbolTable.globalNum + symbolTable.fnNum)
+                                            + function.returnSlots)
                             ));
                         }else{
                             function.body.add(new Instruction(
@@ -433,7 +434,6 @@ public class Analyser {
                     num = analyseCallParamList();
                 }
 
-                System.out.println(symbolTable.fnNum);
                 if(fn.pos + 1 == symbolTable.trueFnNum){
                     if(num != function.paramSlots){
                         throw new AnalyzeError(ErrorCode.ParamsError,
@@ -489,7 +489,8 @@ public class Analyser {
                                     InstructionType.u32Param,
                                     InstructionKind.arga,
                                     Integer.toString(tempPos -
-                                            (symbolTable.globalNum + symbolTable.fnNum) + 1)
+                                            (symbolTable.globalNum + symbolTable.fnNum)
+                                            + function.returnSlots)
                             ));
                         }else{
                             function.body.add(new Instruction(
