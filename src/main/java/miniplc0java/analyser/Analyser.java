@@ -129,6 +129,8 @@ public class Analyser {
                     tempReturn.getStartPos());
         }
 
+        this.program.functions.add(this.function);
+
         analyseBlockStmt();
 
         if(function.body.size() != 0 &&
@@ -159,7 +161,7 @@ public class Analyser {
         this.symbolTable.clearNow();
         this.symbolTable.index.pop();
 
-        this.program.functions.add(this.function);
+
         System.out.println("endFunction");
         isStart = true;
     }
@@ -229,7 +231,6 @@ public class Analyser {
 
                 System.out.println("nowAssignExpr");
                 tempExpr = "assign";
-                return tempExpr;
             } else if (check(TokenType.L_PAREN)) {
                 expect(TokenType.L_PAREN);
                 String returnType;
@@ -393,7 +394,7 @@ public class Analyser {
                     num = analyseCallParamList();
                 }
 
-                if(num != function.paramSlots){
+                if(num != program.functions.get(fn.pos).paramSlots){
                     throw new AnalyzeError(ErrorCode.ParamsError,
                             tempToken.getStartPos());
                 }
@@ -415,56 +416,56 @@ public class Analyser {
 
                 System.out.println("nowCallExpr");
                 tempExpr = fn.returnType;
-                return tempExpr;
-            }
+            }else {
 
-            Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
-            if (tempSymbol != null) {
-                if (!tempSymbol.isInit) {
-                    throw new AnalyzeError(ErrorCode.NotInitialized,
-                            tempToken.getStartPos());
-                }
-                int tempPos = symbolTable.symbolStack.indexOf(tempSymbol);
-                if (tempPos < symbolTable.globalNum) {
-                    //  加载全局变量
-                    function.body.add(new Instruction(
-                            InstructionType.u32Param,
-                            InstructionKind.globa,
-                            Integer.toString(tempPos)
-                    ));
-                    function.body.add(new Instruction(
-                            InstructionType.NoParam,
-                            InstructionKind.load64
-                    ));
-                } else if (tempPos >= symbolTable.globalNum + symbolTable.fnNum) {
-                    //  加载局部变量
-                    function.body.add(new Instruction(
-                            InstructionType.u32Param,
-                            InstructionKind.loca,
-                            Integer.toString(tempPos -
-                                    (symbolTable.globalNum + symbolTable.fnNum))
-                    ));
-                    function.body.add(new Instruction(
-                            InstructionType.NoParam,
-                            InstructionKind.load64
-                    ));
+                Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
+                if (tempSymbol != null) {
+                    if (!tempSymbol.isInit) {
+                        throw new AnalyzeError(ErrorCode.NotInitialized,
+                                tempToken.getStartPos());
+                    }
+                    int tempPos = symbolTable.symbolStack.indexOf(tempSymbol);
+                    if (tempPos < symbolTable.globalNum) {
+                        //  加载全局变量
+                        function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.globa,
+                                Integer.toString(tempPos)
+                        ));
+                        function.body.add(new Instruction(
+                                InstructionType.NoParam,
+                                InstructionKind.load64
+                        ));
+                    } else if (tempPos >= symbolTable.globalNum + symbolTable.fnNum) {
+                        //  加载局部变量
+                        function.body.add(new Instruction(
+                                InstructionType.u32Param,
+                                InstructionKind.loca,
+                                Integer.toString(tempPos -
+                                        (symbolTable.globalNum + symbolTable.fnNum))
+                        ));
+                        function.body.add(new Instruction(
+                                InstructionType.NoParam,
+                                InstructionKind.load64
+                        ));
+                    } else {
+                        //  非法调用函数
+                        throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
+                    }
+                    switch (tempSymbol.type) {
+                        case INT:
+                            tempExpr = "int";
+                            break;
+                        case DOUBLE:
+                            tempExpr = "double";
+                            break;
+                    }
                 } else {
-                    //  非法调用函数
                     throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
                 }
-                switch (tempSymbol.type) {
-                    case INT:
-                        tempExpr = "int";
-                        break;
-                    case DOUBLE:
-                        tempExpr = "double";
-                        break;
-                }
-            } else {
-                throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
-            }
 
-            //not complete
+                //not complete
+            }
         } else if (check(TokenType.UINT_LITERAL)) {
             System.out.println("nowUINT");
             tempToken = expect(TokenType.UINT_LITERAL);
@@ -518,7 +519,7 @@ public class Analyser {
             tempToken = expect(TokenType.STRING_LITERAL);
             this.symbolTable.pushGlobal("", SymbolKind.CONST,
                     SymbolType.STRING);
-            this.program.globals.add(new Global(tempToken.getValueString()));
+            this.program.globals.add(new Global(tempToken.getValueString() + "\0"));
             function.body.add(new Instruction(
                     InstructionType.u32Param,
                     InstructionKind.push,
@@ -686,19 +687,15 @@ as_expr -> expr 'as' IDENT
                     signStack.pop();
                     negateNum++;
                 }
-                if (check(TokenType.IDENT)) {
-                    expect(TokenType.IDENT);
-                    objectStack.push("1");
-                    System.out.println("pushObjIdent");
-                } else {
-                    String tempString = analyseExpr(true);
-                    if (!tempString.equals(t)) {
-                        throw new AnalyzeError(ErrorCode.UnmatchType,
-                                peek().getStartPos());
-                    }
-                    objectStack.push("1");
-                    System.out.println("pushObjExpr");
+
+                String tempString = analyseExpr(true);
+                if (!tempString.equals(t)) {
+                    throw new AnalyzeError(ErrorCode.UnmatchType,
+                            peek().getStartPos());
                 }
+                objectStack.push("1");
+                System.out.println("pushObjExpr");
+
                 if (isStart) {
                     function = startFn;
                 }
@@ -813,6 +810,7 @@ as_expr -> expr 'as' IDENT
             throw new AnalyzeError(ErrorCode.InvalidType, tempType.getStartPos());
         }
         this.symbolTable.pushParam(tempToken.getValueString(), type);
+        this.symbolTable.symbolStack.peek().isInit = true;
         this.function.paramSlots++;
         System.out.println("endFnParam");
     }
