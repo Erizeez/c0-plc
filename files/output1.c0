@@ -55,7 +55,7 @@ name 0 return 1 param 1 loc 0 body 12
 	17
 	49
 name 1 return 1 param 2 loc 1 body 56 
-	0a 2
+	0a 1
 	01 0000000000000001
 	17
 	0b 2
