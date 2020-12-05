@@ -113,7 +113,13 @@ public class Program {
                     write4ByteByCal(Integer.parseInt(i.param), dos);
                 }else if(i.type == InstructionType.u64Param){
                     writeBytes(i.exportOpcode(), dos);
-                    write8ByteByCal(Integer.parseInt(i.param), dos);
+                    if(i.param.length() != 16){
+                        write8ByteByCal(Integer.parseInt(i.param), dos);
+                    }else{
+                        for(int j = 0; j + 2 <= i.param.length(); j+=2){
+                            dos.write(Integer.parseInt(i.param.substring(j, j + 2), 16));
+                        }
+                    }
                 }
             }
         }
