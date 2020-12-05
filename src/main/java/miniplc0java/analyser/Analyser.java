@@ -106,7 +106,7 @@ public class Analyser {
         int tempPos = this.symbolTable.symbolStack.size() - 1;
         this.symbolTable.pushTrueFn(tempToken.getValueString());
         this.symbolTable.index.push(this.symbolTable.symbolStack.size());
-        this.function.name = this.symbolTable.symbolStack.size() - 1;
+
 
 
         Symbol tempSymbol = this.symbolTable.symbolStack.peek();
@@ -171,6 +171,7 @@ public class Analyser {
         this.symbolTable.clearNow();
         this.symbolTable.index.pop();
 
+        this.function.name = this.symbolTable.symbolStack.size() - 1;
         this.program.functions.add(this.function);
         program.globals.add(new Global(tempToken.getValueString()));
 
