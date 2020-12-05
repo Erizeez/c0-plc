@@ -433,7 +433,8 @@ public class Analyser {
                     num = analyseCallParamList();
                 }
 
-                if(fn.pos + 1 == symbolTable.fnNum){
+                System.out.println(symbolTable.fnNum);
+                if(fn.pos + 1 == symbolTable.trueFnNum){
                     if(num != function.paramSlots){
                         throw new AnalyzeError(ErrorCode.ParamsError,
                                 tempToken.getStartPos());
