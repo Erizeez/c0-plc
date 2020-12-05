@@ -40,7 +40,7 @@ public class SymbolTable {
     }
 
     public void pushTrueFn(String name){
-        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, globalNum + fnNum));
+        symbolStack.push(new Symbol(name, SymbolKind.FN, SymbolType.NONE, trueFnNum));
         fnNum++;
         trueFnNum++;
     }
