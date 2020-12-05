@@ -103,6 +103,15 @@ public class SymbolTable {
         return null;
     }
 
+    public Symbol getGlobal(String name){
+        for(int i = 0; i < fnNum + globalNum; i++){
+            if(name.equals(symbolStack.get(i).name)){
+                return symbolStack.get(i);
+            }
+        }
+        return null;
+    }
+
     public Symbol getFn(String fnName){
         for(Symbol s : symbolStack){
             System.out.println(s.name);

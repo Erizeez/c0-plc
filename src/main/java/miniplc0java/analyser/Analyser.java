@@ -14,6 +14,7 @@ public class Analyser {
     public Function function;
     public Function startFn = new Function();
     public Program program = new Program();
+    public Symbol symbol;
     private boolean isStart = true;
     private boolean isRExpr = false;
     // int - 1, double - 2, void - 0
@@ -109,7 +110,7 @@ public class Analyser {
 
 
 
-        Symbol tempSymbol = this.symbolTable.symbolStack.peek();
+        symbol = this.symbolTable.symbolStack.peek();
 
         expect(TokenType.L_PAREN);
         if (check(TokenType.CONST_KW) ||
@@ -123,18 +124,18 @@ public class Analyser {
         if (tempReturn.getValueString().equals("void")) {
             function.returnSlots = 0;
             this.returnType = 0;
-            tempSymbol.returnSlots = 0;
-            tempSymbol.returnType = "void";
+            symbol.returnSlots = 0;
+            symbol.returnType = "void";
         } else if (tempReturn.getValueString().equals("int")) {
             function.returnSlots = 1;
             this.returnType = 1;
-            tempSymbol.returnSlots = 1;
-            tempSymbol.returnType = "int";
+            symbol.returnSlots = 1;
+            symbol.returnType = "int";
         } else if (tempReturn.getValueString().equals("double")) {
             function.returnSlots = 1;
             this.returnType = 2;
-            tempSymbol.returnSlots = 1;
-            tempSymbol.returnType = "double";
+            symbol.returnSlots = 1;
+            symbol.returnType = "double";
         } else {
             throw new AnalyzeError(ErrorCode.InvalidType,
                     tempReturn.getStartPos());
@@ -404,6 +405,17 @@ public class Analyser {
                     default:
                 }
                 Symbol fn = symbolTable.getFn(tempToken.getValueString());
+
+                if(fn.requiredInit.size() != 0){
+                    for(String varS : fn.requiredInit){
+                        Symbol bugSymbol = this.symbolTable.getGlobal(varS);
+                        if(this.symbolTable.getGlobal(varS).isInit == false){
+                            throw new AnalyzeError(ErrorCode.NotInitialized,
+                                    tempToken.getStartPos());
+                        }
+                    }
+                }
+
                 if (fn == null) {
 
                     throw new AnalyzeError(ErrorCode.NoFn,
@@ -456,12 +468,9 @@ public class Analyser {
                 //  Indent
                 Symbol tempSymbol = symbolTable.getExist(tempToken.getValueString());
                 if (tempSymbol != null) {
-                    if (!tempSymbol.isInit) {
-                        throw new AnalyzeError(ErrorCode.NotInitialized,
-                                tempToken.getStartPos());
-                    }
+
                     int tempPos = symbolTable.symbolStack.indexOf(tempSymbol);
-                    if (tempPos < symbolTable.globalNum) {
+                    if (tempPos < symbolTable.globalNum + symbolTable.fnNum) {
                         //  加载全局变量
                         function.body.add(new Instruction(
                                 InstructionType.u32Param,
@@ -494,9 +503,18 @@ public class Analyser {
                                 InstructionType.NoParam,
                                 InstructionKind.load64
                         ));
-                    } else {
+                    }
+                    if(tempSymbol.kind == SymbolKind.FN) {
                         //  非法调用函数
                         throw new AnalyzeError(ErrorCode.NoSymbol, tempToken.getStartPos());
+                    }
+                    if (!tempSymbol.isInit) {
+                        if (tempPos < symbolTable.globalNum + symbolTable.fnNum){
+                            symbol.requiredInit.add(tempSymbol.name);
+                        }else{
+                            throw new AnalyzeError(ErrorCode.NotInitialized,
+                                    tempToken.getStartPos());
+                        }
                     }
                     switch (tempSymbol.type) {
                         case INT:
