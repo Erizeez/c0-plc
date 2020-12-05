@@ -556,7 +556,7 @@ public class Analyser {
             this.program.globals.add(new Global(tempToken.getValueString()
                     .replace("\\n",  (char)10+"")));
             function.body.add(new Instruction(
-                    InstructionType.u32Param,
+                    InstructionType.u64Param,
                     InstructionKind.push,
                     Integer.toString(this.program.globals.size() - 1)
             ));
