@@ -999,7 +999,7 @@ as_expr -> expr 'as' IDENT
                     this.function.body.add(new Instruction(
                             InstructionType.u32Param,
                             InstructionKind.loca,
-                            Integer.toString(symbolTable.num - symbolTable.globalNum - symbolTable.fnNum)));
+                            Integer.toString(symbolTable.num - 1)));
                     //  指示当前在赋值表达式右部
                     isRExpr = true;
                     tempString = analyseExpr(false);
@@ -1071,7 +1071,7 @@ as_expr -> expr 'as' IDENT
                 this.function.body.add(new Instruction(
                         InstructionType.u32Param,
                         InstructionKind.loca,
-                        Integer.toString(symbolTable.num - symbolTable.globalNum - symbolTable.fnNum)));
+                        Integer.toString(symbolTable.num - 1)));
                 //  指示当前在赋值表达式右部
                 isRExpr = true;
                 tempString = analyseExpr(false);
