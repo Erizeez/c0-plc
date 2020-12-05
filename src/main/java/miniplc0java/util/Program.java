@@ -127,7 +127,7 @@ public class Program {
     }
 
     public void export(String s) throws IOException {
-        File file = new File("files/output.c1");
+        File file = new File("files/output1.c0");
         FileWriter fs = new FileWriter(file);
         fs.write(magic + "\n");
         fs.write(version + "\n");

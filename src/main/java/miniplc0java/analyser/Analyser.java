@@ -519,7 +519,7 @@ public class Analyser {
             tempToken = expect(TokenType.STRING_LITERAL);
             this.symbolTable.pushGlobal("", SymbolKind.CONST,
                     SymbolType.STRING);
-            this.program.globals.add(new Global(tempToken.getValueString() + "\0"));
+            this.program.globals.add(new Global(tempToken.getValueString()));
             function.body.add(new Instruction(
                     InstructionType.u32Param,
                     InstructionKind.push,
