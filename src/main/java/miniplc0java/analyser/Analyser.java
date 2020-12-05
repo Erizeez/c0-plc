@@ -590,6 +590,10 @@ public class Analyser {
             System.out.println("startNegateExpr");
             expect(TokenType.MINUS);
             tempExpr = analyseExpr(false);
+            this.function.body.add(new Instruction(
+                    InstructionType.NoParam,
+                    InstructionKind.negi
+            ));
             System.out.println("endNegateExpr");
         }
 

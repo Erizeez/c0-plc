@@ -34,16 +34,17 @@ name 6 return 0 param 0 loc 0 body 3
 	1a 1
 	48 2
 	03 1
-name 0 return 1 param 1 loc 0 body 55 
+name 0 return 1 param 1 loc 0 body 56 
 	0b 0
 	13
 	01 0000000000000000
 	30
 	39
 	43 1
-	41 5
+	41 6
 	0b 0
 	01 0000000000000001
+	34
 	17
 	49
 	41 43
@@ -90,7 +91,7 @@ name 0 return 1 param 1 loc 0 body 55
 	41 0
 	41 0
 	41 0
-name 5 return 1 param 0 loc 2 body 67 
+name 5 return 1 param 0 loc 2 body 68 
 	0a 0
 	01 0000000000000000
 	17
@@ -111,16 +112,17 @@ name 5 return 1 param 0 loc 2 body 67
 	0a 1
 	01 0000000000000015
 	17
-	41 17
+	41 18
 	0a 1
 	13
 	01 0000000000000000
 	30
 	39
 	43 1
-	41 8
+	41 9
 	1a 0
 	01 0000000000000001
+	34
 	4a 2
 	0b 0
 	01 0000000000000000
