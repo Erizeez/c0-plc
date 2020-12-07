@@ -566,17 +566,18 @@ public class Analyser {
         } else if (check(TokenType.DOUBLE_LITERAL)) {
             System.out.println("nowDOUBLE");
             tempToken = expect(TokenType.DOUBLE_LITERAL);
+            System.out.println(Long.toHexString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString()))));
             if (isStart) {
                 startFn.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
-                        Long.toBinaryString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString())))
+                        Long.toHexString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString())))
                 ));
             } else {
                 function.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
-                        Long.toBinaryString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString())))
+                        Long.toHexString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString())))
                 ));
             }
             tempExpr = "double";

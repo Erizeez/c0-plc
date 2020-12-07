@@ -115,10 +115,9 @@ public class Program {
                     writeBytes(i.exportOpcode(), dos);
                     if(i.param.length() != 16){
                         if(i.param.length() == 63){
-                            dos.write(0);
-                            for(int m = 0; m < i.param.length(); m++){
-                                dos.write(i.param.charAt(m) - '0');
-                            }
+
+                            dos.write(Integer.parseInt(i.param, 16));
+
                         }else{
                             write8ByteByCal(Integer.parseInt(i.param), dos);
                         }
