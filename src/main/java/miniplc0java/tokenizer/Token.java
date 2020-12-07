@@ -1,5 +1,6 @@
 package miniplc0java.tokenizer;
 
+import miniplc0java.util.DoubleLiteral;
 import miniplc0java.util.Pos;
 
 import java.util.Objects;
@@ -89,6 +90,8 @@ public class Token {
 
     public String getValueString() {
         if (value instanceof Integer || value instanceof String || value instanceof Character) {
+            return value.toString();
+        }else if(value instanceof DoubleLiteral){
             return value.toString();
         }
         throw new Error("No suitable cast for token value.");

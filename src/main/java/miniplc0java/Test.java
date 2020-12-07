@@ -63,7 +63,7 @@ public class Test {
 //        }
             var analyzer = new Analyser(tokenizer);
             analyzer.analyse();
-            analyzer.program.export(outFile);
+            analyzer.program.exportBinary(outFile);
         }catch(Exception | TokenizeError e){
             e.printStackTrace();
         }

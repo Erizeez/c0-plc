@@ -570,13 +570,13 @@ public class Analyser {
                 startFn.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
-                        ((DoubleLiteral) tempToken.getValue()).toString()
+                        Long.toBinaryString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString())))
                 ));
             } else {
                 function.body.add(new Instruction(
                         InstructionType.u64Param,
                         InstructionKind.push,
-                        ((DoubleLiteral) tempToken.getValue()).toString()
+                        Long.toBinaryString(Double.doubleToRawLongBits(Double.parseDouble(tempToken.getValueString())))
                 ));
             }
             tempExpr = "double";
